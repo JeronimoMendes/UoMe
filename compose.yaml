@@ -1,0 +1,30 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: et-backend
+    ports:
+      - 8080:8080
+    volumes:
+      - ./backend/app:/app
+    networks:
+      - default
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: et-frontend
+    ports:
+      - 8501:8501
+    volumes:
+      - ./frontend/app:/app
+    depends_on:
+      - backend
+    networks:
+      - default
+
+networks:
+  default:
+    name: et-network
