@@ -9,12 +9,17 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=et
+    env_file:
+      - backend/.env
     ports:
       - 8000:8000
     volumes:
-      - ./backend/app:/app
+      - type: bind
+        source: ./backend/app
+        target: /code/app
     networks:
       - default
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
     build:
@@ -25,7 +30,9 @@ services:
     ports:
       - 8501:8501
     volumes:
-      - ./frontend/app:/app
+      - type: bind
+        source: ./frontend/app
+        target: /app
     depends_on:
       - backend
     networks:

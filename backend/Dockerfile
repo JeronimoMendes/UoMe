@@ -19,8 +19,6 @@ RUN poetry install --no-dev
 
 COPY . .
 
-WORKDIR /code/app
-
 EXPOSE 8000
 
-CMD [ "fastapi", "dev", "--host", "0.0.0.0", "--port", "8000", "main.py"]
+CMD [ "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
