@@ -1,2 +1,4 @@
 *.pyc
 .env
+.vscode
+.ruff_cache
