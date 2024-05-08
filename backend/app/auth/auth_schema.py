@@ -16,6 +16,11 @@ class CreateUser(SQLModel):
     password: str
 
 
+class LoginUser(SQLModel):
+    email: str
+    password: str
+
+
 class UserResponse(SQLModel):
     id: uuid.UUID
     username: str
