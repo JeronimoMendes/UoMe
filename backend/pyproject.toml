@@ -12,6 +12,7 @@ pydantic = "^2.7.1"
 sqlmodel = "^0.0.18"
 alembic = "^1.13.1"
 psycopg2-binary = "^2.9.9"
+passlib = "^1.7.4"
 
 
 [tool.poetry.group.dev.dependencies]
