@@ -27,6 +27,8 @@ services:
       dockerfile: Dockerfile
     container_name: et-frontend
     image: et-frontend
+    env_file:
+      - frontend/.env
     ports:
       - 8501:8501
     volumes:
