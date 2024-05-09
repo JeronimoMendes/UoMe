@@ -18,8 +18,12 @@ services:
         source: ./backend/app
         target: /code/app
     networks:
-      - default
+      - et-network
+    links:
+      - database:database
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - database
 
   frontend:
     build:
@@ -38,7 +42,9 @@ services:
     depends_on:
       - backend
     networks:
-      - default
+      - et-network
+    links:
+      - backend:backend
 
   database:
     image: postgres:16
@@ -52,12 +58,13 @@ services:
     volumes:
       - database:/var/lib/postgresql/data
     networks:
-      - default
+      - et-network
+
 
 
 networks:
-  default:
-    name: et-network
+  et-network:
+    driver: bridge
 
 
 volumes:

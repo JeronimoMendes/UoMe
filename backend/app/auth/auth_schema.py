@@ -5,8 +5,8 @@ from sqlmodel import Field, SQLModel
 
 class User(SQLModel, table=True):
     id: uuid.UUID = Field(primary_key=True, default=uuid.uuid4(), nullable=False)
-    username: str
-    email: str
+    username: str = Field(nullable=False, unique=True, index=True)
+    email: str = Field(nullable=False, unique=True)
     password: str
 
 

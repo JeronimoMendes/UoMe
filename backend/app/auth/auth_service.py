@@ -13,12 +13,20 @@ from app.auth.auth_schema import CreateUser, User
 from app.core.db import get_db
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "supersecret")
 EXPIRATION_MINUTES = 30
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-def create_user(db: Session, user: CreateUser):
+def create_user(db: Session, user: CreateUser) -> User:
+    # check if user with the same email or username already exists
+    query = select(User).where(User.email == user.email)
+    if db.exec(query).first():
+        raise Exception("Email already exists")
+    query = select(User).where(User.username == user.username)
+    if db.exec(query).first():
+        raise Exception("Username already exists")
+
     hashed_password = pwd_context.hash(user.password)
     db_user = User(
         id=uuid.uuid4(),
@@ -27,8 +35,6 @@ def create_user(db: Session, user: CreateUser):
         password=hashed_password,
     )
     db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
     return db_user
 
 
@@ -50,7 +56,7 @@ def create_access_token(email: str):
 
 
 # dependency that given a bearer token, returns the user
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     credentials_exception = HTTPException(status_code=401, detail="Could not validate credentials")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
