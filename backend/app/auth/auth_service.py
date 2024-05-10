@@ -38,6 +38,14 @@ def create_user(db: Session, user: CreateUser) -> User:
     return db_user
 
 
+def delete_user(db: Session, username: str):
+    query = select(User).where(User.username == username)
+    user = db.exec(query).first()
+    if not user:
+        raise Exception("User not found")
+    db.delete(user)
+
+
 def authenticate_user(db: Session, email: str, password: str) -> bool | User:
     query = select(User).where(User.email == email)
     user = db.exec(query).first()

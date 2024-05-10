@@ -30,6 +30,15 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {"access_token": access_token, "token_type": "bearer"}
 
 
+@auth_router.delete("/users/me")
+def delete_user(
+    current_user: UserResponse = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
+):
+    auth_service.delete_user(db, current_user.username)
+    return {"message": "User deleted"}
+
+
 @auth_router.get("/users/me", response_model=UserResponse)
 def get_user(current_user: UserResponse = Depends(auth_service.get_current_user)):
     return current_user

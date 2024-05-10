@@ -1,13 +1,13 @@
 import logging
 import os
-from typing import Generator
+from typing import Callable, Generator
 
 import pytest
 from dotenv import load_dotenv
 from fastapi.testclient import TestClient
 from sqlmodel import SQLModel
 
-from app.core.db import Session, create_engine
+from app.core.db import Session, create_engine, get_db
 from app.main import app
 from tests.populate_db import populate_db
 
@@ -44,9 +44,19 @@ def populated_db() -> None:
             session.close()
 
 
+@pytest.fixture()
+def override_get_db(db: Session) -> Callable:
+    async def _override_get_db():
+        yield db
+
+    return _override_get_db
+
+
 @pytest.fixture
-def app_client(populated_db) -> TestClient:
-    return TestClient(app)
+def app_client(populated_db, override_get_db: Callable) -> TestClient:
+    test_app = TestClient(app)
+    test_app.app.dependency_overrides[get_db] = override_get_db
+    return test_app
 
 
 @pytest.fixture

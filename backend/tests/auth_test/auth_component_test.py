@@ -2,7 +2,7 @@ import pytest
 from sqlmodel import select
 
 from app.auth.auth_schema import CreateUser, User
-from app.auth.auth_service import authenticate_user, create_user
+from app.auth.auth_service import authenticate_user, create_user, delete_user
 from app.core.db import Session
 
 
@@ -54,3 +54,10 @@ def test_authenticate_unexistant_user(db: Session):
 def test_authenticate_wrong_password(db: Session, user: User):
     auth_user = authenticate_user(db, user.email, "test1")
     assert auth_user is False
+
+
+def test_delete_user(db: Session, user: User):
+    delete_user(db, user.username)
+
+    query = db.exec(select(User).where(User.email == user.email))
+    assert len(query.fetchall()) == 0
