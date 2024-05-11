@@ -4,9 +4,9 @@ from fastapi.routing import APIRouter
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlmodel import Session
 
-from app.auth import auth_service
-from app.auth.auth_schema import CreateUser, UserResponse
 from app.core.db import get_db
+from app.schemas.auth_schema import CreateUser, UserResponse
+from app.services import auth_service
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

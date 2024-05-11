@@ -9,8 +9,8 @@ from jose.exceptions import JWTError
 from passlib.context import CryptContext
 from sqlmodel import Session, select
 
-from app.auth.auth_schema import CreateUser, User
 from app.core.db import get_db
+from app.schemas.auth_schema import CreateUser, User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecret")

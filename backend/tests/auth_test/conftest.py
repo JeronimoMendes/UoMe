@@ -1,8 +1,8 @@
 import pytest
 
-from app.auth.auth_schema import CreateUser, User
-from app.auth.auth_service import create_user
 from app.core.db import Session
+from app.schemas.auth_schema import CreateUser, User
+from app.services.auth_service import create_user
 
 
 @pytest.fixture

@@ -1,8 +1,8 @@
 from uuid import uuid4
 
-from app.auth.auth_schema import User
-from app.auth.auth_service import pwd_context
 from app.core.db import Session
+from app.schemas.auth_schema import User
+from app.services.auth_service import pwd_context
 
 
 def populate_db(db: Session) -> None:

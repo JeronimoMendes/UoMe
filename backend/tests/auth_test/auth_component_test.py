@@ -1,9 +1,9 @@
 import pytest
 from sqlmodel import select
 
-from app.auth.auth_schema import CreateUser, User
-from app.auth.auth_service import authenticate_user, create_user, delete_user
 from app.core.db import Session
+from app.schemas.auth_schema import CreateUser, User
+from app.services.auth_service import authenticate_user, create_user, delete_user
 
 
 def test_create_user(db: Session):
