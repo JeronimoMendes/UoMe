@@ -10,6 +10,7 @@ python = "^3.10"
 streamlit = "^1.34.0"
 pydantic = "^2.7.1"
 watchdog = "^4.0.0"
+hydralit = "^1.0.14"
 
 
 [tool.poetry.group.dev.dependencies]

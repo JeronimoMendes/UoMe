@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 
-WORKDIR /app
+WORKDIR /code
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -17,8 +17,8 @@ COPY pyproject.toml poetry.lock ./
 
 RUN poetry install --no-dev
 
-COPY app/ .
+COPY . .
 
 EXPOSE 8000
 
-ENTRYPOINT [ "fastapi", "dev", "--host", "0.0.0.0", "--port", "8000", "main.py"]
+CMD [ "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

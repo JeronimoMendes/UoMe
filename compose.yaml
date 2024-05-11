@@ -3,28 +3,69 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    image: et-backend
     container_name: et-backend
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=et
+    env_file:
+      - backend/.env
     ports:
-      - 8080:8080
+      - 8000:8000
     volumes:
-      - ./backend/app:/app
+      - type: bind
+        source: ./backend/app
+        target: /code/app
     networks:
-      - default
+      - et-network
+    links:
+      - database:database
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - database
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: et-frontend
+    image: et-frontend
+    env_file:
+      - frontend/.env
     ports:
       - 8501:8501
     volumes:
-      - ./frontend/app:/app
+      - type: bind
+        source: ./frontend/app
+        target: /app
     depends_on:
       - backend
     networks:
-      - default
+      - et-network
+    links:
+      - backend:backend
+
+  database:
+    image: postgres:16
+    container_name: et-database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: et
+    ports:
+      - 5432:5432
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      - et-network
+
+
 
 networks:
-  default:
-    name: et-network
+  et-network:
+    driver: bridge
+
+
+volumes:
+  database:
