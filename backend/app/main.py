@@ -2,10 +2,12 @@ import uvicorn
 from fastapi import FastAPI
 
 from app.routers.auth_router import auth_router
+from app.routers.group_router import group_router
 
 app = FastAPI()
 
-app.include_router(auth_router)
+app.include_router(auth_router, tags=["Auth"])
+app.include_router(group_router, tags=["Group"])
 
 
 @app.get("/")

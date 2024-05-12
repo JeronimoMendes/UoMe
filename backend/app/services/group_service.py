@@ -40,7 +40,9 @@ def add_user_to_group(db: Session, username: str, group_id: UUID) -> None:
     if group is None:
         raise HTTPException(status_code=404, detail="Group not found")
 
-    group_user = db.exec(select(UserGroup).where(UserGroup.user_id == user.id)).first()
+    group_user = db.exec(
+        select(UserGroup).where(UserGroup.user_id == user.id).where(UserGroup.group_id == group_id)
+    ).first()
     if group_user is not None:
         raise HTTPException(status_code=400, detail="User already in group")
 
