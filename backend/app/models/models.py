@@ -25,9 +25,35 @@ class Group(SQLModel, table=True):
     created_at: datetime = Field(default=datetime.now(UTC))
 
     users: list[User] = Relationship(back_populates="groups", link_model=UserGroup)
+    expenses: list["Expense"] = Relationship(back_populates="group")
 
     # if id is not provided, generate a new uuid
     def __init__(self, **data):
         super().__init__(**data)
         if not self.id:
             self.id = uuid.uuid4()
+
+
+class Expense(SQLModel, table=True):
+    id: uuid.UUID = Field(primary_key=True)
+    amount: float = Field(nullable=False, gt=0.0)
+    description: str = Field(nullable=False)
+    date: datetime = Field(default=datetime.now(UTC))
+    created_at: datetime = Field(default=datetime.now(UTC))
+    created_by: uuid.UUID = Field(foreign_key="user.id")
+    group_id: uuid.UUID = Field(foreign_key="group.id", nullable=True)
+    type: str
+
+    group: Group = Relationship(back_populates="expenses")
+    participants: list["ExpenseParticipant"] = Relationship(back_populates="expense")
+
+
+class ExpenseParticipant(SQLModel, table=True):
+    expense_id: uuid.UUID = Field(foreign_key="expense.id", primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", primary_key=True)
+    # users who paid the expense will have a positive amount (total) in the amount field
+    # while users who owe the expense will have a negative amount (partial) in the amount field
+    amount: float = Field(nullable=False)
+
+    user: User = Relationship(back_populates="expenses")
+    expense: Expense = Relationship(back_populates="participants")
