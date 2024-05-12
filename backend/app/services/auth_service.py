@@ -10,7 +10,8 @@ from passlib.context import CryptContext
 from sqlmodel import Session, select
 
 from app.core.db import get_db
-from app.schemas.auth_schema import CreateUser, User
+from app.models import User
+from app.schemas.auth_schema import CreateUser
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecret")

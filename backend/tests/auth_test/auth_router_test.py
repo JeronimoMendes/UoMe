@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from app.schemas.auth_schema import User
+from app.models import User
 
 
 def test_authenticate(app_client: TestClient):

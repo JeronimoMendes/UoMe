@@ -2,7 +2,8 @@ import pytest
 from sqlmodel import select
 
 from app.core.db import Session
-from app.schemas.auth_schema import CreateUser, User
+from app.models import User
+from app.schemas.auth_schema import CreateUser
 from app.services.auth_service import authenticate_user, create_user, delete_user
 
 
@@ -44,6 +45,10 @@ def test_authenticate_user(db: Session, user: User):
     assert auth_user.username == user.username
     assert auth_user.email == user.email
     assert auth_user.password == user.password
+
+    auth_user = authenticate_user(db, "joedoe@gmail.com", "easy-pw-123")
+    assert auth_user is not False
+    assert isinstance(auth_user, User)
 
 
 def test_authenticate_unexistant_user(db: Session):

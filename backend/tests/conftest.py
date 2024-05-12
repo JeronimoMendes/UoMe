@@ -9,6 +9,8 @@ from sqlmodel import SQLModel
 
 from app.core.db import Session, create_engine, get_db
 from app.main import app
+from app.models import User
+from app.services.auth_service import CreateUser, create_user
 from tests.populate_db import populate_db
 
 LOGGER = logging.getLogger(__name__)
@@ -40,7 +42,6 @@ def populated_db() -> None:
 
         with Session(bind=conn) as session:
             populate_db(session)
-            session.commit()
             session.close()
 
 
@@ -83,3 +84,11 @@ def authenticated_client(app_client) -> Generator[TestClient, None, None]:
     )
 
     return app_client
+
+
+@pytest.fixture
+def user(db: Session) -> User:
+    user = CreateUser(username="test", email="test@gmail.com", password="test")
+    user = create_user(db, user)
+    db.commit()
+    return user
