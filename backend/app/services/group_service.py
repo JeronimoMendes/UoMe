@@ -8,7 +8,11 @@ from app.models import Group, User, UserGroup
 from app.schemas.group_schemas import GroupCreate
 
 
-def create_group(db: Session, group: GroupCreate, user: User) -> Group:
+def create_group(db: Session, group: GroupCreate, username: str) -> Group:
+    user = db.exec(select(User).where(User.username == username)).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
     new_group = Group(name=group.name, description=group.description)
     db.add(new_group)
 
@@ -32,13 +36,15 @@ def add_user_to_group(db: Session, username: str, group_id: UUID) -> None:
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    user_id = user.id
-
     group = db.exec(select(Group).where(Group.id == group_id)).first()
     if group is None:
         raise HTTPException(status_code=404, detail="Group not found")
 
-    user_group = UserGroup(user_id=user_id, group_id=group_id)
+    group_user = db.exec(select(UserGroup).where(UserGroup.user_id == user.id)).first()
+    if group_user is not None:
+        raise HTTPException(status_code=400, detail="User already in group")
+
+    user_group = UserGroup(user_id=user.id, group_id=group_id)
     db.add(user_group)
 
 

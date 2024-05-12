@@ -31,7 +31,7 @@ def test_get_group(db):
 
 def test_create_group(db, user):
     group = GroupCreate(name="test group", description="test group description")
-    new_group = create_group(db, group, user)
+    new_group = create_group(db, group, user.username)
     assert new_group.id is not None
     assert new_group.name == "test group"
     assert new_group.description == "test group description"
@@ -43,6 +43,10 @@ def test_create_group(db, user):
 
     # check if the user who created the group is a member of the group
     assert user in new_group.users
+
+    # unexistent user
+    with pytest.raises(HTTPException):
+        create_group(db, group, username="unexistent")
 
 
 def test_delete_group(db):
@@ -60,6 +64,18 @@ def test_add_user_to_group(db, user):
     group = get_group(db, group_id="a953d022-4895-4327-bd44-82a41b2a9725")
     assert user in group.users
 
+    # user already in group
+    with pytest.raises(HTTPException):
+        add_user_to_group(db, username="joedoe", group_id="c018fc08-0873-4355-bc95-40a07f146cf7")
+
+    # unexistent user
+    with pytest.raises(HTTPException):
+        add_user_to_group(db, username="unexistent", group_id="a953d022-4895-4327-bd44-82a41b2a9725")
+
+    # unexistent group
+    with pytest.raises(HTTPException):
+        add_user_to_group(db, username="joedoe", group_id="b953d022-4895-4327-bd44-82a41b2a9825")
+
 
 def test_remove_user_from_group(db):
     remove_user_from_group(db, username="joedoe", group_id="c018fc08-0873-4355-bc95-40a07f146cf7")
@@ -67,9 +83,25 @@ def test_remove_user_from_group(db):
     user = db.exec(select(User).where(User.username == "joedoe")).first()
     assert user not in group.users
 
+    # user not in group
+    with pytest.raises(HTTPException):
+        remove_user_from_group(db, username="joedoe", group_id="c018fc08-0873-4355-bc95-40a07f146cf7")
+
+    # unexistent user
+    with pytest.raises(HTTPException):
+        remove_user_from_group(db, username="unexistent", group_id="c018fc08-0873-4355-bc95-40a07f146cf7")
+
+    # unexistent group
+    with pytest.raises(HTTPException):
+        remove_user_from_group(db, username="joedoe", group_id="b953d022-4895-4327-bd44-82a41b2a9825")
+
 
 def test_get_user_groups(db):
     user_groups = get_user_groups(db, username="joedoe")
     assert len(user_groups) == 2
     assert user_groups[0].name == "Joe's personal group"
     assert user_groups[1].name == "General group"
+
+    # unexistent user
+    with pytest.raises(HTTPException):
+        get_user_groups(db, username="unexistent")
