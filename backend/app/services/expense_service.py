@@ -51,4 +51,6 @@ def get_user_expenses(db: Session, user_id: UUID) -> list[Expense]:
 
 
 def get_group_expenses(db: Session, group_id: UUID) -> list[Expense]:
-    pass
+    group = db.exec(select(User).where(User.id == group_id)).first()
+    expenses = [participation.expense for participation in group.expenses]
+    return expenses
