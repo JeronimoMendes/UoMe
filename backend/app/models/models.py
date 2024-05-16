@@ -16,6 +16,7 @@ class User(SQLModel, table=True):
     password: str
 
     groups: list["Group"] = Relationship(back_populates="users", link_model=UserGroup)
+    expenses: list["ExpenseParticipant"] = Relationship(back_populates="user")
 
 
 class Group(SQLModel, table=True):
