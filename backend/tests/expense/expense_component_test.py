@@ -113,7 +113,7 @@ def test_get_group_expenses(db: Session):
     for fake_expense in fake_expenses:
         create_expense(db, fake_expense, user)
 
-    expenses = get_group_expenses(db, user.id)
+    expenses = get_group_expenses(db, user.groups[0].id)
     assert len(expenses) == 5
     for expense in expenses:
         assert expense.created_by == user.id

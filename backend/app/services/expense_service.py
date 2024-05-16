@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 from sqlmodel import delete, select
 
 from app.core.db import Session
-from app.models import Expense, ExpenseParticipant, User
+from app.models import Expense, ExpenseParticipant, Group, User
 from app.schemas.expenses_schema import ExpenseCreate
 
 
@@ -51,6 +51,5 @@ def get_user_expenses(db: Session, user_id: UUID) -> list[Expense]:
 
 
 def get_group_expenses(db: Session, group_id: UUID) -> list[Expense]:
-    group = db.exec(select(User).where(User.id == group_id)).first()
-    expenses = [participation.expense for participation in group.expenses]
-    return expenses
+    group = db.exec(select(Group).where(Group.id == group_id)).first()
+    return group.expenses
