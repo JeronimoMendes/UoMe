@@ -73,8 +73,6 @@ def authenticated_client(app_client) -> Generator[TestClient, None, None]:
         },
     )
 
-    print(res.json())
-
     access_token = res.json()["access_token"]
 
     app_client.headers.update(

@@ -1,4 +1,4 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from app.core.db import Session
 from app.models import Group, User, UserGroup
@@ -8,19 +8,19 @@ from app.services.auth_service import pwd_context
 def populate_db(db: Session) -> None:
     pw = pwd_context.hash("easy-pw-123")
     user1 = User(
-        id=uuid4(),
+        id=UUID("398a95d6-f521-4572-b65c-e8b024f04030"),
         email="joedoe@gmail.com",
         username="joedoe",
         password=pw,
     )
     user2 = User(
-        id=uuid4(),
+        id=UUID("d1a0fdd8-db0a-4368-bb5a-b01bdeed6563"),
         email="louishamilton@gmail.com",
         username="louishamilton",
         password=pw,
     )
     user3 = User(
-        id=uuid4(),
+        id=UUID("78a91f2c-d65d-4cdf-be40-57879678ed4d"),
         email="cristianoronaldo@gmail.com",
         username="cristianoronaldo",
         password=pw,
