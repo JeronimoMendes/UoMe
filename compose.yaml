@@ -3,8 +3,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    image: et-backend
-    container_name: et-backend
+    image: uome-backend
+    container_name: uome-backend
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -18,7 +18,7 @@ services:
         source: ./backend/app
         target: /code/app
     networks:
-      - et-network
+      - uome-network
     links:
       - database:database
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
@@ -29,8 +29,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: et-frontend
-    image: et-frontend
+    container_name: uome-frontend
+    image: uome-frontend
     env_file:
       - frontend/.env
     ports:
@@ -42,13 +42,13 @@ services:
     depends_on:
       - backend
     networks:
-      - et-network
+      - uome-network
     links:
       - backend:backend
 
   database:
     image: postgres:16
-    container_name: et-database
+    container_name: uome-database
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -58,12 +58,12 @@ services:
     volumes:
       - database:/var/lib/postgresql/data
     networks:
-      - et-network
+      - uome-network
 
 
 
 networks:
-  et-network:
+  uome-network:
     driver: bridge
 
 

@@ -1,4 +1,4 @@
-# TBD
+# UoMe
 
 This project will serve to workaround Splitwise predatory plans and to put in practice ML and AI concepts.
 
@@ -32,8 +32,9 @@ docker compose up
 ```
 
 This will start the containers:
-- `et-backend` is the backend service and will be running on port 8000
-- `et-frontend` is the frontend service and will be running on port 8501
+- `uome-backend` is the backend service and will be running on port 8000
+- `uome-frontend` is the frontend service and will be running on port 8501
+- `uome-db` is the database service and will be running on port 5432
 
 
 # Services
