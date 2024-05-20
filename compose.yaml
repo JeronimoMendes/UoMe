@@ -31,20 +31,25 @@ services:
       dockerfile: Dockerfile
     container_name: uome-frontend
     image: uome-frontend
-    env_file:
-      - frontend/.env
+    # env_file:
+    #   - frontend/.env
     ports:
-      - 8501:8501
+      - 3000:3000
     volumes:
       - type: bind
-        source: ./frontend/app
-        target: /app
+        source: ./frontend/src
+        target: /app/src
+      - type: bind
+        source: ./frontend/node_modules
+        target: /app/node_modules
+      - nextjs_cache:/home/nextjs/app/.next/
     depends_on:
       - backend
     networks:
       - uome-network
     links:
       - backend:backend
+    command: npm run dev
 
   database:
     image: postgres:16
@@ -69,3 +74,4 @@ networks:
 
 volumes:
   database:
+  nextjs_cache:
