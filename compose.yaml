@@ -43,8 +43,8 @@ services:
         source: ./frontend/node_modules
         target: /app/node_modules
       - nextjs_cache:/home/nextjs/app/.next/
-    depends_on:
-      - backend
+    # depends_on:
+    #   - backend
     networks:
       - uome-network
     links:

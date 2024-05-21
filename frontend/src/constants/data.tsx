@@ -1,4 +1,4 @@
-import { Group, NavItem } from '@/types';
+import { Expense, Group, NavItem } from '@/types';
 
 export type User = {
   id: number;
@@ -17,11 +17,17 @@ export const navItems: NavItem[] = [
     label: 'Dashboard'
   },
   {
-    title: 'Members',
-    href: '/dashboard/employee',
-    icon: 'user',
-    label: 'employee'
+    title: 'Personal Expenses',
+    href: '/dashboard/personal',
+    icon: 'billing',
+    label: 'Personal Expenses'
   },
+  {
+    title: 'Groups',
+    href: '/dashboard/groups',
+    icon: 'employee',
+    label: 'Groups'
+  }
 ];
 
 export const groups: Group[] = [
@@ -38,3 +44,42 @@ export const groups: Group[] = [
     description: 'Expenses from our roadtrip in Portugal'
   }
 ];
+
+export const expensesOverview: Expense[] = [
+  {
+    id: 1,
+    description: 'Groceries',
+    amount: 54.99,
+    date: '2024-05-12',
+    author: 'Silvester Stalone',
+    createdAt: '2024-05-21',
+    participants: [
+      {
+        name: 'Silvester Stalone',
+        amount: -54.99
+      },
+      {
+        name: 'John Doe',
+        amount: 27.50
+      }
+    ]
+  },
+  {
+    id: 2,
+    description: 'Groceries',
+    amount: 100,
+    date: '2024-10-05',
+    author: 'John Doe',
+    createdAt: '2024-05-19',
+    participants: [
+      {
+        name: 'Ann Frank',
+        amount: 75
+      },
+      {
+        name: 'John Doe',
+        amount: -100
+      }
+    ]
+  },
+]

@@ -32,6 +32,21 @@ export interface Group {
   description: string;
 }
 
+export interface ExpenseParticipant {
+  name: string;
+  amount: number;
+}
+
+export interface Expense {
+  id: number;
+  description: string;
+  amount: number;
+  date: string;
+  author: string;
+  createdAt: string;
+  participants: ExpenseParticipant[];
+}
+
 export type MainNavItem = NavItemWithOptionalChildren;
 
 export type SidebarNavItem = NavItemWithChildren;
