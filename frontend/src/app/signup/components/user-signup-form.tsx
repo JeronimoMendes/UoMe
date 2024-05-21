@@ -24,9 +24,9 @@ const formSchema: any = z.object({
     }),
 });
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SignupFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+export function SignupForm({ className, ...props }: SignupFormProps) {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -34,6 +34,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         defaultValues: {
             username: "",
             email: "",
+            password: "",
         },
     })
 
