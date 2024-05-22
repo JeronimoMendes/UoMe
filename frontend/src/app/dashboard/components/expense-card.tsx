@@ -10,7 +10,6 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
     const nowDate = new Date();
     const diff = nowDate.getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    console.log(days)
 
     let dateText = '';
     if (days === 0) {

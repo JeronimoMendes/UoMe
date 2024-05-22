@@ -1,6 +1,7 @@
 // import { CalendarDateRangePicker } from '@/components/date-range-picker';
 // import { Overview } from '@/components/overview';
 // import { RecentSales } from '@/components/recent-sales';
+'use client';
 import {
   Card,
   CardContent,
@@ -12,10 +13,23 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { expensesOverview } from '@/constants/data';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 import { ExpenseCard } from './components/expense-card';
 
-
 export default function Dashboard() {
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    // TODO: eventually fix hydration issue on LoadingSkeleton and uncomment
+    // return <LoadingSkeleton />
+    return <></>
+  }
+
+  if (status === 'unauthenticated') {
+    redirect('/login');
+  }
+
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">

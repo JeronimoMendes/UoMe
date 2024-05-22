@@ -14,8 +14,6 @@ interface DashboardNavProps {
 
 export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const path: string = usePathname();
-  console.log("path", path)
-
   if (!items?.length || !path) {
     return null;
   }

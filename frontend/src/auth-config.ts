@@ -1,41 +1,58 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialProvider from 'next-auth/providers/credentials';
-import GithubProvider from 'next-auth/providers/github';
+import { signIn } from './api/auth-service';
 
 export const authConfig: NextAuthOptions = {
   providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID ?? '',
-      clientSecret: process.env.GITHUB_SECRET ?? ''
-    }),
     CredentialProvider({
       credentials: {
-        email: {
-          type: 'email'
+        username: {
+          type: 'text',
+          label: 'Username',
+          placeholder: 'joedoe@example.com'
         },
         password: {
-          type: 'password'
+          type: 'password',
+          label: 'Password'
         }
       },
       async authorize(credentials, req) {
-        const user = {
-          id: '1',
-          name: 'John',
-          email: credentials?.email as string
-        };
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          return user;
-        } else {
-          // If you return null then an error will be displayed advising the user to check their details.
+        if (!credentials) {
           return null;
-
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
+        try {
+          const creds = {
+            email: credentials?.username,
+            password: credentials?.password
+          };
+          const user = await signIn(credentials);
+          if (user) {
+            return user;
+          } else {
+            return null;
+          }
+        } catch (error) {
+          console.error(error);
+          return null;
+        }
+
       }
     })
   ],
   pages: {
-    signIn: '/signup' //sigup page
+    signIn: '/login' //sigup page
+  },
+  callbacks: {
+    authorized({ auth, request: { nextUrl }}) {
+      const isLoggedIn = !!auth?.user;
+      const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
+      if (isOnDashboard) {
+        if (isLoggedIn) return true;
+        return false; // Redirect unauthenticated users to login page
+      } else if (isLoggedIn) {
+        return Response.redirect(new URL('/dashboard', nextUrl));
+      }
+      return true;
+    }
   }
 };

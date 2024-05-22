@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,23 +23,26 @@ const formSchema: any = z.object({
 interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
+    const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const callbackUrl = searchParams.get("callbackUrl");
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            username: "",
             email: "",
+            password: "",
         },
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);
-
-        console.log(values)
-        setTimeout(() => {
+        await signIn("credentials", {
+            username: values.email,
+            password: values.password,
+            callbackUrl: callbackUrl ?? "/dashboard",
+        });
         setIsLoading(false);
-        }, 3000);
     }
 
     return (
@@ -50,7 +55,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                         <FormItem>
                             <FormLabel>Email</FormLabel>
                             <FormControl>
-                                <Input placeholder="joedoe@example.com" {...field} />
+                                <Input type="email" placeholder="joedoe@example.com" disabled={isLoading} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -63,13 +68,13 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                         <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                                <Input placeholder="supersecret123" type="password" {...field} />
+                                <Input placeholder="supersecret123" type="password" disabled={isLoading} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Login</Button>
+                <Button type="submit" disabled={isLoading} >Login</Button>
             </form>
         </Form>
     )

@@ -41,7 +41,6 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);
 
-        console.log(values)
         setTimeout(() => {
         setIsLoading(false);
         }, 3000);

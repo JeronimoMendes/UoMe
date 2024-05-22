@@ -15,14 +15,14 @@ export default function RootLayout({
   session: Session | null
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} overflow-hidden`}>
-        <Providers session={session}>
-          <Toaster />
-          {children}
-        </Providers>
-      </body>
-    </html>
-  );
+    return (
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${inter.className} overflow-hidden`}>
+          <Providers session={session}>
+            <Toaster />
+            {children}
+          </Providers>
+        </body>
+      </html>
+    );
 }
