@@ -13,3 +13,9 @@ export interface TokenResponse {
     access_token: string;
     token_type: string;
 }
+
+export interface SignUpRequest {
+    email: string;
+    username: string;
+    password: string;
+}

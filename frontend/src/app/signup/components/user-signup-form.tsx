@@ -1,11 +1,15 @@
 "use client";
 
+import { signUp } from "@/api/auth-service";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Toaster } from "@/components/ui/sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const formSchema: any = z.object({
@@ -18,28 +22,46 @@ const formSchema: any = z.object({
     password: z.string().min(8, {
         message: "Password must be at least 8 characters long.",
     }),
-}).extend({
-    passwordConfirmation: z.string().refine((data) => data === formSchema.password, {
-        message: "Passwords do not match.",
+    passwordConfirmation: z.string().min(8, {
+        message: "Password must be at least 8 characters long.",
     }),
+}).refine(data => data.password === data.passwordConfirmation, {
+    message: "Passwords must match.",
+    path: ["passwordConfirmation"],
 });
 
 interface SignupFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SignupForm({ className, ...props }: SignupFormProps) {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const router = useRouter();
 
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
             username: "",
             email: "",
             password: "",
+            passwordConfirmation: "",
         },
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);
+
+        try {
+            await signUp({
+                username: values.username,
+                email: values.email,
+                password: values.password,
+            });
+            toast.loading("Account created successfully! Redirecting to login page...");
+            setTimeout(() => {
+                router.push("/login");
+            }, 3000);
+        } catch (error) {
+            toast.error("An error occurred: " + error.message)
+        }
 
         setTimeout(() => {
         setIsLoading(false);
@@ -47,6 +69,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
     }
 
     return (
+        <>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
                 <FormField
@@ -116,5 +139,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
                 <Button type="submit">Sign up</Button>
             </form>
         </Form>
+        <Toaster />
+        </>
     )
 }
