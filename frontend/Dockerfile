@@ -1,24 +1,27 @@
-FROM python:3.12-slim
+FROM node:18-alpine AS base
+
+RUN apk add --no-cache libc6-compat
+RUN npm i -g npm
+
+EXPOSE 3000
+
+ENV PORT 3000
+ENV NODE_ENV production
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    software-properties-common \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+COPY package.json .
+COPY package-lock.json .
 
-RUN pip3 install poetry
+RUN npm install --omit=optional
+RUN npx browserslist@latest --update-db
+RUN npx next telemetry disable
 
-RUN poetry config virtualenvs.create false
+# need to install linux specific swc builds
+RUN npm install -D @swc/cli @swc/core
 
-COPY pyproject.toml poetry.lock ./
+COPY . .
 
-RUN poetry install --no-dev
+RUN npm run build
 
-COPY app/ .
-
-EXPOSE 8501
-
-ENTRYPOINT ["streamlit", "run", "main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD [ "npm", "start" ]

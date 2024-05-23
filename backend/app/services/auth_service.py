@@ -11,7 +11,7 @@ from sqlmodel import Session, select
 
 from app.core.db import get_db
 from app.models import User
-from app.schemas.auth_schema import CreateUser
+from app.schemas.auth_schema import CreateUser, UserResponse
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecret")
@@ -57,9 +57,10 @@ def authenticate_user(db: Session, email: str, password: str) -> bool | User:
     return user
 
 
-def create_access_token(email: str):
+def create_access_token(user: User):
     expire = datetime.datetime.now() + datetime.timedelta(minutes=EXPIRATION_MINUTES)
-    to_encode = {"exp": expire, "sub": email}
+    public_user = UserResponse.model_validate(user.model_dump(mode="json"))
+    to_encode = {"exp": expire, "sub": user.email, "user": public_user.model_dump(mode="json")}
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm="HS256")
     return encoded_jwt
 

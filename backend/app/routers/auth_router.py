@@ -25,7 +25,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    access_token = auth_service.create_access_token(user.email)
+    access_token = auth_service.create_access_token(user)
 
     return {"access_token": access_token, "token_type": "bearer"}
 
