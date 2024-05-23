@@ -1,28 +1,28 @@
 'use client';
 import { Toaster } from '@/components/ui/toaster';
-import type { Session } from 'next-auth';
+import { SessionProvider } from 'next-auth/react';
 import { Inter } from 'next/font/google';
-import Providers from './dashboard/components/layout/providers';
+import ThemeProvider from './dashboard/components/layout/ThemeToggle/theme-provider';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
 
 export default function RootLayout({
-  session,
   children
 }: {
-  session: Session | null
   children: React.ReactNode;
 }) {
-    return (
-      <html lang="en" suppressHydrationWarning>
-        <body className={`${inter.className} overflow-hidden`}>
-          <Providers session={session}>
-            <Toaster />
-            {children}
-          </Providers>
-        </body>
-      </html>
-    );
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} overflow-hidden`}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <SessionProvider>
+              {children}
+              <Toaster />
+            </SessionProvider>
+          </ThemeProvider>
+      </body>
+    </html>
+  );
 }
