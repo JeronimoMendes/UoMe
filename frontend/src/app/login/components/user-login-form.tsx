@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import * as React from "react";
+import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -22,7 +23,7 @@ const formSchema: any = z.object({
 
 interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function LoginForm({ className, ...props }: LoginFormProps) {
+function LoginFormCore({ className, ...props }: LoginFormProps) {
     const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const callbackUrl = searchParams.get("callbackUrl");
@@ -78,4 +79,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             </form>
         </Form>
     )
+}
+
+export function LoginForm({ className, ...props }: LoginFormProps) {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <LoginFormCore className={className} {...props}/>
+        </Suspense>
+    );
 }
