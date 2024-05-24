@@ -42,7 +42,8 @@ const authConfig: NextAuthOptions = {
           const user = {
             id: token_decoded.user.id,
             username: token_decoded.user.username,
-            email: token_decoded.user.email
+            email: token_decoded.user.email,
+            token: access_token
           }
           if (user) {
             return user;
@@ -65,6 +66,7 @@ const authConfig: NextAuthOptions = {
         token.id = user.id;
         token.username = user.username;
         token.email = user.email;
+        token.token = user.token;
       }
       return token;
     },
@@ -73,6 +75,8 @@ const authConfig: NextAuthOptions = {
         session.user.id = token.id;
         session.user.username = token.username;
         session.user.email = token.email;
+        // encode token
+        session.user.token = token.token;
       }
       return session;
     }
