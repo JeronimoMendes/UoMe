@@ -26,3 +26,8 @@ export interface Group {
     description: string,
     created_at: string,
 }
+
+export interface CreateGroupRequest {
+    name: string;
+    description: string;
+}
