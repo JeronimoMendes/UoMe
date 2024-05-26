@@ -27,7 +27,26 @@ export interface Group {
     created_at: string,
 }
 
+export interface GroupView extends Group {
+    members: User[];
+    expenses: Expense[];
+}
+
 export interface CreateGroupRequest {
     name: string;
     description: string;
+}
+
+export interface Expense {
+    id: string;
+    amount: number;
+    description: string;
+    date: string;
+    type: string;
+    participant: Participant[];
+}
+
+export interface Participant {
+    user_id: string;
+    amount: string;
 }

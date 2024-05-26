@@ -1,7 +1,3 @@
-
-// import { CalendarDateRangePicker } from '@/components/date-range-picker';
-// import { Overview } from '@/components/overview';
-// import { RecentSales } from '@/components/recent-sales';
 'use client';
 import { createGroup, getMyGroups } from '@/api/group-service';
 import { Group } from '@/api/types';

@@ -23,7 +23,7 @@ import {
   Pizza,
   Settings,
   SunMedium,
-  Trash,
+  Trash2 as Trash,
   Twitter,
   User,
   User2Icon,

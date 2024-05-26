@@ -40,7 +40,7 @@ export async function setAuthToken(token: string) {
     frontendClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
 
-serverClient.interceptors.response.use(undefined, (error: AxiosError) => {
+const errorInterceptor = (error: AxiosError) => {
     if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
@@ -55,5 +55,11 @@ serverClient.interceptors.response.use(undefined, (error: AxiosError) => {
         console.log('Error', error.message);
     }
     console.log(error.config);
+
+    if (error.status === 401) {
+        window.location.replace('/login');
+    }
     return Promise.reject(error);
-});
+}
+
+serverClient.interceptors.response.use(undefined, errorInterceptor);

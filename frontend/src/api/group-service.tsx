@@ -1,10 +1,16 @@
 
 import { getApiClient } from "./client";
-import { CreateGroupRequest, Group } from "./types";
+import { CreateGroupRequest, Group, GroupView } from "./types";
 
 export async function getMyGroups(): Promise<Group[]> {
     const client = await getApiClient('client');
     const response = await client.get('/users/me/groups');
+    return response.data;
+}
+
+export async function getGroup(id: string): Promise<GroupView> {
+    const client = await getApiClient('client');
+    const response = await client.get(`/groups/${id}`);
     return response.data;
 }
 

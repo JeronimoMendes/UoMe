@@ -3,8 +3,8 @@ import Header from './components/layout/header';
 import Sidebar from './components/layout/sidebar';
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn Dashboard Starter',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'UoMe',
+  description: 'Expense tracking app'
 };
 
 export default async function DashboardLayout({

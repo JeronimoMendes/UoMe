@@ -20,7 +20,8 @@ export const navItems: NavItem[] = [
     title: 'Personal Expenses',
     href: '/dashboard/personal',
     icon: 'billing',
-    label: 'Personal Expenses'
+    label: 'Personal Expenses',
+    disabled: true
   },
   {
     title: 'Groups',
