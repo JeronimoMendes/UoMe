@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-
+import { getSession } from 'next-auth/react';
 const SERVER_BASE_URL = process.env.NEXT_PUBLIC__SERVER_API_BASE_URL || 'http://host.docker.internal:8000';
 const CLIENT_BASE_URL = process.env.NEXT_PUBLIC_CLIENT_API_BASE_URL || 'http://localhost:8000';
 
@@ -21,6 +21,24 @@ export const frontendClient = axios.create({
         // Add any additional headers if required
     },
 });
+
+export async function getApiClient(side: 'server' | 'client') {
+    const client =  side === 'server' ? serverClient : frontendClient;
+
+    if (side === 'client') {
+        const session = await getSession();
+        if (session && session.user) {
+            client.defaults.headers.common['Authorization'] = `Bearer ${session.user.token}`;
+        }
+    }
+
+    return client;
+}
+
+export async function setAuthToken(token: string) {
+    serverClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    frontendClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
 
 serverClient.interceptors.response.use(undefined, (error: AxiosError) => {
     if (error.response) {
