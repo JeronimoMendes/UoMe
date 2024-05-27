@@ -35,30 +35,28 @@ def delete_group(group_id: UUID, user: User = Depends(get_current_user), db: Ses
     return {"message": "Group deleted"}
 
 
-@group_router.post("/groups/{group_id}/users/{username}")
-def add_user_to_group(
-    group_id: str, username: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)
-):
+@group_router.post("/groups/{group_id}/users/{email}")
+def add_user_to_group(group_id: str, email: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # if user does not belong to the group, raise 403
     group = db.get(Group, group_id)
     if group is None:
         raise HTTPException(status_code=404, detail="Group not found")
     if group not in user.groups:
         raise HTTPException(status_code=403, detail="User does not belong to the group")
-    group_service.add_user_to_group(db, username, group_id)
+    group_service.add_user_to_group(db, email, group_id)
     return {"message": "User added to the group"}
 
 
-@group_router.delete("/groups/{group_id}/users/{username}")
+@group_router.delete("/groups/{group_id}/users/{email}")
 def remove_user_from_group(
-    group_id: str, username: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)
+    group_id: str, email: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)
 ):
     group = db.get(Group, group_id)
     if group is None:
         raise HTTPException(status_code=404, detail="Group not found")
     if group not in user.groups:
         raise HTTPException(status_code=403, detail="User does not belong to the group")
-    group_service.remove_user_from_group(db, username, group_id)
+    group_service.remove_user_from_group(db, email, group_id)
     return {"message": "User removed from the group"}
 
 

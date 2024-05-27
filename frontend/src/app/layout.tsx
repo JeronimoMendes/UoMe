@@ -1,5 +1,5 @@
 'use client';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 import { SessionProvider } from 'next-auth/react';
 import { Inter } from 'next/font/google';
 import ThemeProvider from './dashboard/components/layout/ThemeToggle/theme-provider';
@@ -19,7 +19,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <SessionProvider>
               {children}
-              <Toaster />
+              <Toaster richColors/>
             </SessionProvider>
           </ThemeProvider>
       </body>

@@ -31,8 +31,9 @@ def delete_group(db: Session, group_id: UUID) -> None:
     db.delete(group)
 
 
-def add_user_to_group(db: Session, username: str, group_id: UUID) -> None:
-    user = db.exec(select(User).where(User.username == username)).first()
+def add_user_to_group(db: Session, email: str, group_id: UUID) -> None:
+    print(email)
+    user = db.exec(select(User).where(User.email == email)).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -50,8 +51,8 @@ def add_user_to_group(db: Session, username: str, group_id: UUID) -> None:
     db.add(user_group)
 
 
-def remove_user_from_group(db: Session, username: str, group_id: UUID) -> None:
-    user = db.exec(select(User).where(User.username == username)).first()
+def remove_user_from_group(db: Session, email: str, group_id: UUID) -> None:
+    user = db.exec(select(User).where(User.email == email)).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 

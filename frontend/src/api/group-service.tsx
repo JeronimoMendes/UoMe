@@ -20,3 +20,14 @@ export async function createGroup(newGroup: CreateGroupRequest): Promise<Group> 
     const response = await client.post('/groups', newGroup);
     return response.data;
 }
+
+export async function inviteUserToGroup(groupId: string, email: string): Promise<void> {
+    const client = await getApiClient('client');
+    await client.post(`/groups/${groupId}/users/${email}`);
+}
+
+
+export async function removeUserFromGroup(groupId: string, email: string): Promise<void> {
+    const client = await getApiClient('client');
+    await client.delete(`/groups/${groupId}/users/${email}`);
+}

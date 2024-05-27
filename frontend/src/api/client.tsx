@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { getSession } from 'next-auth/react';
+import { toast } from 'sonner';
 const SERVER_BASE_URL = process.env.NEXT_PUBLIC__SERVER_API_BASE_URL || 'http://host.docker.internal:8000';
 const CLIENT_BASE_URL = process.env.NEXT_PUBLIC_CLIENT_API_BASE_URL || 'http://localhost:8000';
 
@@ -42,11 +43,10 @@ export async function setAuthToken(token: string) {
 
 const errorInterceptor = (error: AxiosError) => {
     if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
+        toast.error("Something went wrong...", {
+            duration: 5000,
+            description: error.response.data?.detail,
+        })
     } else if (error.request) {
         // The request was made but no response was received
         console.log(error.request);
@@ -54,12 +54,13 @@ const errorInterceptor = (error: AxiosError) => {
         // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message);
     }
-    console.log(error.config);
 
-    if (error.status === 401) {
+    if (error.response?.status === 401) {
         window.location.replace('/login');
+        toast.error("You are not authorized to access this resource.")
     }
     return Promise.reject(error);
 }
 
 serverClient.interceptors.response.use(undefined, errorInterceptor);
+frontendClient.interceptors.response.use(undefined, errorInterceptor);
