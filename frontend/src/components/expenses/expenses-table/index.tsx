@@ -18,7 +18,7 @@ import {
     TableCell,
     TableHead,
     TableHeader,
-    TableRow,
+    TableRow
 } from "@/components/ui/table"
 
 import { Button } from "@/components/ui/button"
@@ -27,15 +27,13 @@ import { Input } from "@/components/ui/input"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  onSubmit: () => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  onSubmit
 }: DataTableProps<TData, TValue>) {
-    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [sorting, setSorting] = React.useState<SortingState>([{ id: "date", desc: true }])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const table = useReactTable({
         data,
@@ -53,8 +51,8 @@ export function DataTable<TData, TValue>({
     })
 
     return (
-        <div>
-            <div className="flex items-center py-4">
+        <div className="overflow-x-auto max-w-xs sm:max-w-full">
+            <div className="flex items-center py-4 max-w-fit">
                 <Input
                 placeholder="Filter expenses..."
                 value={(table.getColumn("description")?.getFilterValue() as string) ?? ""}
@@ -63,11 +61,8 @@ export function DataTable<TData, TValue>({
                 }
                 className="max-w-sm"
                 />
-                <Button className="ml-auto" onSubmit={onSubmit}>
-                    Create expense
-                </Button>
             </div>
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-scroll" >
                 <Table>
                     <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -111,7 +106,7 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-                <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex items-center justify-end space-x-2 py-4 max-w-fit">
                 <Button
                 variant="outline"
                 size="sm"

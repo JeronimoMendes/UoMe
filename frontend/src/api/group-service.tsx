@@ -1,6 +1,6 @@
 
 import { getApiClient } from "./client";
-import { CreateGroupRequest, Group, GroupView } from "./types";
+import { CreateGroupRequest, Expense, Group, GroupView } from "./types";
 
 export async function getMyGroups(): Promise<Group[]> {
     const client = await getApiClient('client');
@@ -15,7 +15,6 @@ export async function getGroup(id: string): Promise<GroupView> {
 }
 
 export async function createGroup(newGroup: CreateGroupRequest): Promise<Group> {
-    console.log("newGroup", newGroup);
     const client = await getApiClient('client');
     const response = await client.post('/groups', newGroup);
     return response.data;
@@ -30,4 +29,10 @@ export async function inviteUserToGroup(groupId: string, email: string): Promise
 export async function removeUserFromGroup(groupId: string, email: string): Promise<void> {
     const client = await getApiClient('client');
     await client.delete(`/groups/${groupId}/users/${email}`);
+}
+
+export async function addExpense(expense: Expense): Promise<Expense> {
+    const client = await getApiClient('client');
+    const response = await client.post(`/expenses`, expense);
+    return response.data
 }

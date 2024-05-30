@@ -41,12 +41,13 @@ export interface Expense {
     id: string;
     amount: number;
     description: string;
+    group_id: string;
     date: string;
     type: string;
-    participant: Participant[];
+    participants: Participant[];
 }
 
 export interface Participant {
-    user_id: string;
+    user: User;
     amount: string;
 }
