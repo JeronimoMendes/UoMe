@@ -3,12 +3,12 @@
 This project will serve to workaround Splitwise predatory plans and to put in practice ML and AI concepts.
 
 ## Goals
-- [ ] Track expenses
+- [X] Track expenses
     - [ ] One-on-one
-    - [ ] Group
+    - [X] Group
 - [ ] Predict expense type
 - [ ] Analyse expenses
-    - TBH
+    - TBD
 
 # Getting Started
 
@@ -33,7 +33,7 @@ docker compose up
 
 This will start the containers:
 - `uome-backend` is the backend service and will be running on port 8000
-- `uome-frontend` is the frontend service and will be running on port 8501
+- `uome-frontend` is the frontend service and will be running on port 3000
 - `uome-db` is the database service and will be running on port 5432
 
 
@@ -45,9 +45,11 @@ The backend service is a [FastAPI](https://fastapi.tiangolo.com/) application th
 
 ## Frontend
 
-The frontend service is a [Streamlit](https://streamlit.io/) application that will serve as the user interface for the project.
+The frontend service is a [Next](https://nextjs.org/) application that will serve as the user interface for the project.
 
-Streamlit was chosen because it's a very simple way of creating prototypes.
+Most of the content is client side rendered, with some exceptions that will be server side rendered.
+
+The component library used is [shadcn/ui](https://ui.shadcn.com/).
 
 # Contributing
 

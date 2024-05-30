@@ -3,11 +3,11 @@ tests := ""
 
 generate-migration:
 	@echo "Generating database migration..."
-	@docker run --rm --mount type=bind,source=${PWD}/backend,target=/code -it --workdir /code uome-backend alembic revision -m "$(message)" --autogenerate
+	@docker run --env-file ./backend/.env --network uome_uome-network --rm --mount type=bind,source=${PWD}/backend,target=/code -it --workdir /code uome-backend alembic revision -m "$(message)" --autogenerate
 
 migrate:
 	@echo "Migrating database..."
-	@docker run --rm --mount type=bind,source=${PWD}/backend,target=/code -it --workdir /code uome-backend alembic upgrade head
+	@docker run --env-file ./backend/.env --network uome_uome-network --rm --mount type=bind,source=${PWD}/backend,target=/code -it --workdir /code uome-backend alembic upgrade head
 
 prepare-test-db:
 	@echo "Preparing test database..."
@@ -17,3 +17,7 @@ prepare-test-db:
 test: prepare-test-db
 	@echo "Running tests..."
 	@docker run --name testing -e DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/test_db --rm --mount type=bind,source=${PWD}/backend,target=/code -it --workdir /code uome-backend pytest -k "$(tests)"
+
+migrate-production:
+	@echo "Migrating production database..."
+	flyctl ssh console -a uome -C "poetry run alembic upgrade head"
