@@ -26,9 +26,9 @@ def test_expense_create(authenticated_client: TestClient):
     assert response_json["amount"] == 100.0
     assert response_json["type"] == "test"
     assert response_json["group_id"] == "c018fc08-0873-4355-bc95-40a07f146cf7"
-    assert response_json["participants"][0]["user_id"] == "398a95d6-f521-4572-b65c-e8b024f04030"
+    assert response_json["participants"][0]["user"]["id"] == "398a95d6-f521-4572-b65c-e8b024f04030"
     assert response_json["participants"][0]["amount"] == 100.0
-    assert response_json["participants"][1]["user_id"] == "d1a0fdd8-db0a-4368-bb5a-b01bdeed6563"
+    assert response_json["participants"][1]["user"]["id"] == "d1a0fdd8-db0a-4368-bb5a-b01bdeed6563"
     assert response_json["participants"][1]["amount"] == -50.0
 
 

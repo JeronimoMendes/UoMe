@@ -1,9 +1,9 @@
 "use client"
 
-import * as React from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
+import * as React from "react"
 
-import { cn } from "@/lib/utils"
+import { cn, hashValue } from "@/lib/utils"
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -47,4 +47,21 @@ const AvatarFallback = React.forwardRef<
 ))
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
 
-export { Avatar, AvatarImage, AvatarFallback }
+
+const UserAvatar = React.forwardRef(( props, forwardedRef ) => {
+  const [hashedEmail, setHashedEmail] = React.useState('');
+  React.useEffect(() => {
+    hashValue(props.user.email).then((hashedEmail) => {
+      setHashedEmail(hashedEmail);
+    });
+  }, [])
+  return (
+    <Avatar key={props.user.id} ref={forwardedRef} {...props}>
+      <AvatarImage src={"https://gravatar.com/avatar/" + hashedEmail + "?d=404"} alt={props.user?.username ?? ""} />
+      <AvatarFallback>{props.user.username.slice(0, 1)}</AvatarFallback>
+    </Avatar>
+  )
+});
+UserAvatar.displayName = "UserAvatar"
+
+export { Avatar, AvatarFallback, AvatarImage, UserAvatar }

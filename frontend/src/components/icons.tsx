@@ -1,9 +1,11 @@
 import {
   AlertTriangle,
   ArrowRight,
+  Calendar,
   Check,
   ChevronLeft,
   ChevronRight,
+  ChevronsUpDown,
   CirclePlus,
   CircuitBoardIcon,
   Command,
@@ -23,7 +25,7 @@ import {
   Pizza,
   Settings,
   SunMedium,
-  Trash,
+  Trash2 as Trash,
   Twitter,
   User,
   User2Icon,
@@ -43,6 +45,7 @@ export const Icons = {
   kanban: CircuitBoardIcon,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
+  chevronsUpDown: ChevronsUpDown,
   trash: Trash,
   employee: UserX2Icon,
   post: FileText,
@@ -60,6 +63,7 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  calendar: Calendar,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

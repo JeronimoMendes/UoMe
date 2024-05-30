@@ -1,5 +1,6 @@
 from datetime import datetime
 from uuid import UUID
+from app.schemas.auth_schema import UserResponse
 
 from sqlmodel import SQLModel
 
@@ -14,7 +15,7 @@ class ExpenseCreate(SQLModel):
 
 
 class ExpenseParticipantResponse(SQLModel):
-    user_id: UUID
+    user: UserResponse
     amount: float
 
 

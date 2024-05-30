@@ -7,7 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers.auth_router import auth_router
 from app.routers.expense_router import expense_router
 from app.routers.group_router import group_router
+import sentry_sdk
 
+sentry_sdk.init(
+    dsn=os.getenv("SENTRY_DSN"),
+    enable_tracing=True,
+)
 app = FastAPI()
 
 origins = [

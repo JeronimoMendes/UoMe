@@ -80,7 +80,7 @@ def test_get_user_groups(authenticated_client: TestClient):
 
 
 def test_add_user_to_group(authenticated_client: TestClient, group: dict):
-    response = authenticated_client.post(f"/groups/{group["id"]}/users/cristianoronaldo")
+    response = authenticated_client.post(f"/groups/{group["id"]}/users/cristianoronaldo@gmail.com")
     assert response.status_code == 200
     response_json = response.json()
     assert response_json["message"] == "User added to the group"
@@ -111,10 +111,10 @@ def test_add_user_to_group(authenticated_client: TestClient, group: dict):
 
 
 def test_remove_user_from_group(authenticated_client: TestClient, group: dict):
-    response = authenticated_client.post(f"/groups/{group["id"]}/users/cristianoronaldo")
+    response = authenticated_client.post(f"/groups/{group["id"]}/users/cristianoronaldo@gmail.com")
     assert response.status_code == 200
 
-    response = authenticated_client.delete(f"/groups/{group["id"]}/users/cristianoronaldo")
+    response = authenticated_client.delete(f"/groups/{group["id"]}/users/cristianoronaldo@gmail.com")
     assert response.status_code == 200
     response_json = response.json()
     assert response_json["message"] == "User removed from the group"
@@ -141,12 +141,12 @@ def test_remove_user_from_group(authenticated_client: TestClient, group: dict):
 
 
 def test_remove_user_from_group_unauthorized(app_client: TestClient, authenticated_client: TestClient, group: dict):
-    response = authenticated_client.post(f"/groups/{group["id"]}/users/cristianoronaldo")
+    response = authenticated_client.post(f"/groups/{group["id"]}/users/cristianoronaldo@gmail.com")
     assert response.status_code == 200
 
     app_client.headers.clear()
     app_client.cookies.clear()
-    response = app_client.delete(f"/groups/{group["id"]}/users/cristianoronaldo")
+    response = app_client.delete(f"/groups/{group["id"]}/users/cristianoronaldo@gmail.com")
     assert response.status_code == 401
 
     # authenticate with another user
@@ -164,5 +164,5 @@ def test_remove_user_from_group_unauthorized(app_client: TestClient, authenticat
             "Authorization": f"Bearer {access_token}",
         }
     )
-    response = app_client.delete(f"/groups/{group["id"]}/users/cristianoronaldo")
+    response = app_client.delete(f"/groups/{group["id"]}/users/cristianoronaldo@gmail.com")
     assert response.status_code == 403

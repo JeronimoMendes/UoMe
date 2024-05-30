@@ -1,4 +1,5 @@
 import datetime
+import sentry_sdk
 import os
 import uuid
 
@@ -79,4 +80,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     user = db.exec(select(User).where(User.email == email)).first()
     if user is None:
         raise credentials_exception
+
+    sentry_sdk.set_user({"id": user.id, "username": user.username})
     return user

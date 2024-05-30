@@ -5,7 +5,7 @@ from sqlmodel import select
 
 from app.core.db import Session
 from app.models import Group, User, UserGroup
-from app.schemas.group_schemas import GroupCreate
+from app.schemas.group_schemas import GroupCreate, GroupView
 
 
 def create_group(db: Session, group: GroupCreate, username: str) -> Group:
@@ -31,8 +31,9 @@ def delete_group(db: Session, group_id: UUID) -> None:
     db.delete(group)
 
 
-def add_user_to_group(db: Session, username: str, group_id: UUID) -> None:
-    user = db.exec(select(User).where(User.username == username)).first()
+def add_user_to_group(db: Session, email: str, group_id: UUID) -> None:
+    print(email)
+    user = db.exec(select(User).where(User.email == email)).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -50,8 +51,8 @@ def add_user_to_group(db: Session, username: str, group_id: UUID) -> None:
     db.add(user_group)
 
 
-def remove_user_from_group(db: Session, username: str, group_id: UUID) -> None:
-    user = db.exec(select(User).where(User.username == username)).first()
+def remove_user_from_group(db: Session, email: str, group_id: UUID) -> None:
+    user = db.exec(select(User).where(User.email == email)).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -70,10 +71,18 @@ def remove_user_from_group(db: Session, username: str, group_id: UUID) -> None:
     db.delete(user_group)
 
 
-def get_group(db: Session, group_id: UUID) -> Group:
+def get_group(db: Session, group_id: UUID) -> GroupView:
     group = db.get(Group, group_id)
     if group is None:
         raise HTTPException(status_code=404, detail="Group not found")
+
+    group = GroupView(
+        id=group.id,
+        name=group.name,
+        description=group.description,
+        members=group.users,
+        expenses=group.expenses,
+    )
 
     return group
 
