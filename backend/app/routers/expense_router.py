@@ -14,7 +14,7 @@ expense_router = APIRouter()
 
 
 @expense_router.post("/expenses", response_model=ExpenseResponse)
-def create_expense(expense: ExpenseCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def create_expense(expense: ExpenseCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     expense = expense_service.create_expense(db, expense, user)
     db.commit()
     # response = ExpenseResponse(**expense.model_dump(), participants=expense.participants)
@@ -22,7 +22,7 @@ def create_expense(expense: ExpenseCreate, user: User = Depends(get_current_user
 
 
 @expense_router.delete("/expenses/{expense_id}")
-def delete_expense(expense_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def delete_expense(expense_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     expense = expense_service.get_expense(db, expense_id)
     if not expense:
         raise HTTPException(status_code=404, detail="Expense not found")
@@ -34,7 +34,7 @@ def delete_expense(expense_id: UUID, user: User = Depends(get_current_user), db:
 
 
 @expense_router.get("/expenses/{expense_id}", response_model=ExpenseResponse)
-def get_expense(expense_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def get_expense(expense_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     expense = expense_service.get_expense(db, expense_id)
     if not expense:
         raise HTTPException(status_code=404, detail="Expense not found")
@@ -46,12 +46,12 @@ def get_expense(expense_id: UUID, user: User = Depends(get_current_user), db: Se
 
 
 @expense_router.get("/users/me/expenses", response_model=list[ExpenseResponse])
-def get_user_expenses(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def get_user_expenses(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return expense_service.get_user_expenses(db, user.id)
 
 
 @expense_router.get("/groups/{group_id}/expenses", response_model=list[ExpenseResponse])
-def get_group_expenses(group_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def get_group_expenses(group_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     group = get_group(db, group_id)
     if not group:
         raise HTTPException(status_code=404, detail="Group not found")

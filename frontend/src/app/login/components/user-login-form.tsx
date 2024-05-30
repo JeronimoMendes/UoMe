@@ -48,6 +48,7 @@ function LoginFormCore({ className, ...props }: LoginFormProps) {
 
     return (
         <Form {...form}>
+            <Button onClick={() => {signIn('google', { callbackUrl: '/dashboard' })}}>Login using Google</Button>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
                 <FormField
                     control={form.control}

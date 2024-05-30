@@ -2,6 +2,8 @@ import { signIn } from '@/api/auth-service';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from "next-auth/providers/google";
+
 
 interface IJwtPayload extends JwtPayload {
   user: {
@@ -10,6 +12,12 @@ interface IJwtPayload extends JwtPayload {
     email: string;
   }
 }
+
+console.log(process.env.GOOGLE_CLIENT_ID);
+
+console.log(process.env.GOOGLE_CLIENT_SECRET);
+
+console.log(process.env.JWT_SECRET);
 
 
 const authConfig: NextAuthOptions = {
@@ -56,27 +64,31 @@ const authConfig: NextAuthOptions = {
         }
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+    })
   ],
   pages: {
     signIn: '/login'
   },
   callbacks: {
-    async jwt({ token, user  }: { token: any, user: any }) {
+    async jwt({ token, user, account  }: { token: any, user: any, account: any}) {
       if (user) {
         token.id = user.id;
         token.username = user.username;
         token.email = user.email;
-        token.token = user.token;
+        token.token = user.token || account?.id_token
       }
       return token;
     },
     async session({ session, token, user }) {
       if (session.user) {
         session.user.id = token.id;
-        session.user.username = token.username;
+        session.user.username = token.username || token.name;
         session.user.email = token.email;
         // encode token
-        session.user.token = token.token;
+        session.user.token = token.token || token.access_token;
       }
       return session;
     }

@@ -13,7 +13,10 @@ class User(SQLModel, table=True):
     id: uuid.UUID = Field(primary_key=True, default=uuid.uuid4(), nullable=False)
     username: str = Field(nullable=False, unique=True, index=True)
     email: str = Field(nullable=False, unique=True)
-    password: str
+
+    # null is in case of oauth login
+    password: str = Field(nullable=True)
+    image: str = Field(nullable=True)
 
     groups: list["Group"] = Relationship(back_populates="users", link_model=UserGroup)
     expenses: list["ExpenseParticipant"] = Relationship(back_populates="user")

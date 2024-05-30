@@ -6,6 +6,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Toaster } from "@/components/ui/sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useForm } from "react-hook-form";
@@ -71,6 +72,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
     return (
         <>
         <Form {...form}>
+            <Button onClick={() => signIn("google", { callbackUrl: "/dashboard" })}>Sign up with Google</Button>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
                 <FormField
                     control={form.control}

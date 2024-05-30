@@ -49,15 +49,20 @@ AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
 
 
 const UserAvatar = React.forwardRef(( props, forwardedRef ) => {
-  const [hashedEmail, setHashedEmail] = React.useState('');
+  const [src, setSrc] = React.useState('');
   React.useEffect(() => {
-    hashValue(props.user.email).then((hashedEmail) => {
-      setHashedEmail(hashedEmail);
-    });
+    if (props.user.image) {
+      setSrc(props.user.image)
+    } else {
+      hashValue(props.user.email).then((hashedEmail) => {
+        const url = "https://gravatar.com/avatar/" + hashedEmail + "?d=404"
+        setSrc(url);
+      });
+    }
   }, [])
   return (
     <Avatar key={props.user.id} ref={forwardedRef} {...props}>
-      <AvatarImage src={"https://gravatar.com/avatar/" + hashedEmail + "?d=404"} alt={props.user?.username ?? ""} />
+      <AvatarImage src={src} alt={props.user?.username ?? ""} />
       <AvatarFallback>{props.user.username.slice(0, 1)}</AvatarFallback>
     </Avatar>
   )

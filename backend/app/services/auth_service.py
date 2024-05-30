@@ -13,6 +13,9 @@ from sqlmodel import Session, select
 from app.core.db import get_db
 from app.models import User
 from app.schemas.auth_schema import CreateUser, UserResponse
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecret")
@@ -20,7 +23,7 @@ EXPIRATION_MINUTES = 30
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-def create_user(db: Session, user: CreateUser) -> User:
+def create_user(db: Session, user: CreateUser, oauth: bool = False) -> User:
     # check if user with the same email or username already exists
     query = select(User).where(User.email == user.email)
     if db.exec(query).first():
@@ -29,7 +32,7 @@ def create_user(db: Session, user: CreateUser) -> User:
     if db.exec(query).first():
         raise Exception("Username already exists")
 
-    hashed_password = pwd_context.hash(user.password)
+    hashed_password = pwd_context.hash(user.password) if not oauth else None
     db_user = User(
         id=uuid.uuid4(),
         username=user.username,
@@ -67,19 +70,45 @@ def create_access_token(user: User):
 
 
 # dependency that given a bearer token, returns the user
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     credentials_exception = HTTPException(status_code=401, detail="Could not validate credentials")
+    # first try to decode the token using our auth
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
-    except JWTError:
-        raise credentials_exception
 
-    user = db.exec(select(User).where(User.email == email)).first()
-    if user is None:
-        raise credentials_exception
+        user = db.exec(select(User).where(User.email == email)).first()
+        if user is None:
+            raise credentials_exception
+
+    # if the token is not from our auth, try to decode it using google auth
+    except JWTError:
+        try:
+            request = requests.Request()
+
+            id_info = id_token.verify_oauth2_token(token, request, os.getenv("GOOGLE_CLIENT_ID"))
+            email = id_info["email"]
+
+            user = db.exec(select(User).where(User.email == email)).first()
+            if user is None:
+                # first time a user logs in with google, create a new user
+                new_user = CreateUser(
+                    username=id_info["name"],
+                    email=email,
+                    password="",
+                )
+                user = create_user(db, new_user, oauth=True)
+
+            if id_info.get("picture") and user.image != id_info["picture"]:
+                user.image = id_info["picture"]
+                db.add(user)
+                db.flush()
+                db.refresh(user)
+
+        except Exception:
+            raise credentials_exception
 
     sentry_sdk.set_user({"id": user.id, "username": user.username})
     return user
