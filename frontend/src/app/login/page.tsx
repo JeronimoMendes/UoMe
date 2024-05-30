@@ -1,6 +1,9 @@
 import { Metadata } from "next";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
+import authConfig from "../api/auth/[...nextauth]/authConfig";
 import { LoginForm } from "./components/user-login-form";
 
 export const metadata: Metadata = {
@@ -8,7 +11,13 @@ export const metadata: Metadata = {
   description: "Login page into UoMe.",
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await getServerSession(authConfig);
+
+  if (session) {
+    redirect('/dashboard');
+  }
+
   return (
     <div className="relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
