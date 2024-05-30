@@ -33,5 +33,5 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy
-        workign-directory: ./backend
+        working-directory: ./backend
         run: flyctl deploy
