@@ -62,5 +62,6 @@ const UserAvatar = React.forwardRef(( props, forwardedRef ) => {
     </Avatar>
   )
 });
+UserAvatar.displayName = "UserAvatar"
 
 export { Avatar, AvatarFallback, AvatarImage, UserAvatar }
