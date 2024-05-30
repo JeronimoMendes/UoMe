@@ -18,3 +18,4 @@ class UserResponse(SQLModel):
     id: uuid.UUID
     username: str
     email: str
+    image: str | None

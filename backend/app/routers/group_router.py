@@ -14,17 +14,17 @@ group_router = APIRouter()
 
 
 @group_router.post("/groups", response_model=Group)
-def create_group(group: GroupCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def create_group(group: GroupCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return group_service.create_group(db, group, user.username)
 
 
 @group_router.get("/groups/{group_id}", response_model=GroupView)
-def get_group(group_id: UUID, db: Session = Depends(get_db)):
+async def get_group(group_id: UUID, db: Session = Depends(get_db)):
     return group_service.get_group(db, group_id)
 
 
 @group_router.delete("/groups/{group_id}")
-def delete_group(group_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def delete_group(group_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # if user does not belong to the group, raise 403
     group = db.get(Group, group_id)
     if group is None:
@@ -36,7 +36,9 @@ def delete_group(group_id: UUID, user: User = Depends(get_current_user), db: Ses
 
 
 @group_router.post("/groups/{group_id}/users/{email}")
-def add_user_to_group(group_id: str, email: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def add_user_to_group(
+    group_id: str, email: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
     # if user does not belong to the group, raise 403
     group = db.get(Group, group_id)
     if group is None:
@@ -48,7 +50,7 @@ def add_user_to_group(group_id: str, email: str, user: User = Depends(get_curren
 
 
 @group_router.delete("/groups/{group_id}/users/{email}")
-def remove_user_from_group(
+async def remove_user_from_group(
     group_id: str, email: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)
 ):
     group = db.get(Group, group_id)
@@ -61,5 +63,5 @@ def remove_user_from_group(
 
 
 @group_router.get("/users/me/groups", response_model=list[Group])
-def get_user_groups(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def get_user_groups(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return group_service.get_user_groups(db, current_user.username)

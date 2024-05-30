@@ -31,7 +31,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
 
 @auth_router.delete("/users/me")
-def delete_user(
+async def delete_user(
     current_user: UserResponse = Depends(auth_service.get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -40,5 +40,5 @@ def delete_user(
 
 
 @auth_router.get("/users/me", response_model=UserResponse)
-def get_user(current_user: UserResponse = Depends(auth_service.get_current_user)):
+async def get_user(current_user: UserResponse = Depends(auth_service.get_current_user)):
     return current_user
