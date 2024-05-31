@@ -12,6 +12,7 @@ from app.main import app
 from app.models import User
 from app.services.auth_service import CreateUser, create_user
 from tests.populate_db import populate_db
+from sqlmodel import select
 
 LOGGER = logging.getLogger(__name__)
 
@@ -89,4 +90,10 @@ def user(db: Session) -> User:
     user = CreateUser(username="test", email="test@gmail.com", password="test")
     user = create_user(db, user)
     db.commit()
+    return user
+
+
+@pytest.fixture
+def joedoe(db: Session) -> User:
+    user = db.exec(select(User).where(User.username == "joedoe")).first()
     return user

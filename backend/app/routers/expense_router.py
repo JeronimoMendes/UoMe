@@ -5,10 +5,10 @@ from fastapi.routing import APIRouter
 
 import app.services.expense_service as expense_service
 from app.core.db import Session, get_db
-from app.models import User
+from app.models import User, Group
 from app.schemas.expenses_schema import ExpenseCreate, ExpenseResponse
 from app.services.auth_service import get_current_user
-from app.services.group_service import get_group
+from sqlmodel import select
 
 expense_router = APIRouter()
 
@@ -52,7 +52,7 @@ async def get_user_expenses(user: User = Depends(get_current_user), db: Session 
 
 @expense_router.get("/groups/{group_id}/expenses", response_model=list[ExpenseResponse])
 async def get_group_expenses(group_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    group = get_group(db, group_id)
+    group = db.exec(select(Group).where(Group.id == group_id)).first()
     if not group:
         raise HTTPException(status_code=404, detail="Group not found")
 

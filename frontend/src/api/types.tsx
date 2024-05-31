@@ -30,6 +30,9 @@ export interface Group {
 export interface GroupView extends Group {
     members: User[];
     expenses: Expense[];
+    balance: number;
+    owed: number;
+    owes: number;
 }
 
 export interface CreateGroupRequest {

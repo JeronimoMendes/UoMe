@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException
 from sqlmodel import select
 
 from app.core.db import Session
-from app.models import Group, User, UserGroup
+from app.models import Group, User, UserGroup, ExpenseParticipant, Expense
 from app.schemas.group_schemas import GroupCreate, GroupView
 
 
@@ -71,10 +71,26 @@ def remove_user_from_group(db: Session, email: str, group_id: UUID) -> None:
     db.delete(user_group)
 
 
-def get_group(db: Session, group_id: UUID) -> GroupView:
+def get_group(db: Session, group_id: UUID, user: User) -> GroupView:
     group = db.get(Group, group_id)
     if group is None:
         raise HTTPException(status_code=404, detail="Group not found")
+
+    owed, owes = 0.0, 0.0
+    expense_participations = db.exec(
+        select(ExpenseParticipant)
+        .join(Expense)
+        .where(Expense.group_id == group_id)
+        .where(ExpenseParticipant.user_id == user.id)
+    )
+
+    for participation in expense_participations:
+        if participation.amount < 0:
+            owed += participation.amount
+        else:
+            owes += participation.amount
+
+    balance = owes + owed
 
     group = GroupView(
         id=group.id,
@@ -82,6 +98,9 @@ def get_group(db: Session, group_id: UUID) -> GroupView:
         description=group.description,
         members=group.users,
         expenses=group.expenses,
+        owed=owed,
+        owes=owes,
+        balance=balance,
     )
 
     return group

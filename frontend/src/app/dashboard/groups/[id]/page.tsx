@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { formatCurrency } from '@/lib/utils';
 import { AlertDialogDescription } from '@radix-ui/react-alert-dialog';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
@@ -122,7 +123,13 @@ export default function GroupPage({ params }: { params: { id: string } }) {
                                 </svg>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold text-primary">26 €</div>
+                                {
+                                    group?.balance > 0 ? (
+                                        <div className="text-2xl font-bold text-destructive">{formatCurrency(-group?.balance)}</div>
+                                    ) : (
+                                        <div className="text-2xl font-bold text-primary">{formatCurrency(group?.balance)}</div>
+                                    )
+                                }
                             </CardContent>
                         </Card>
                         <Card>
@@ -146,7 +153,7 @@ export default function GroupPage({ params }: { params: { id: string } }) {
                                 </svg>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">50 €</div>
+                                <div className="text-2xl font-bold">{formatCurrency(Math.abs(group?.owed))}</div>
                             </CardContent>
                         </Card>
                         <Card>
@@ -167,7 +174,7 @@ export default function GroupPage({ params }: { params: { id: string } }) {
                                 </svg>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">24 €</div>
+                                <div className="text-2xl font-bold">{formatCurrency(Math.abs(group?.owes))}</div>
                             </CardContent>
                         </Card>
                     </div>
