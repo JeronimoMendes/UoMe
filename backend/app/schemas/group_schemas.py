@@ -17,3 +17,6 @@ class GroupView(SQLModel):
     description: str = ""
     members: list[UserResponse] = []
     expenses: list[ExpenseResponse] = []
+    balance: float = 0.0
+    owed: float = 0.0
+    owes: float = 0.0

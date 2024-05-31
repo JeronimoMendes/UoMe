@@ -19,8 +19,8 @@ async def create_group(group: GroupCreate, user: User = Depends(get_current_user
 
 
 @group_router.get("/groups/{group_id}", response_model=GroupView)
-async def get_group(group_id: UUID, db: Session = Depends(get_db)):
-    return group_service.get_group(db, group_id)
+async def get_group(group_id: UUID, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    return group_service.get_group(db, group_id, user)
 
 
 @group_router.delete("/groups/{group_id}")
