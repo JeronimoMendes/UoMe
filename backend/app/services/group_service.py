@@ -6,6 +6,7 @@ from sqlmodel import select
 from app.core.db import Session
 from app.models import Group, User, UserGroup, ExpenseParticipant, Expense
 from app.schemas.group_schemas import GroupCreate, GroupView
+from sqlalchemy import func
 
 
 def create_group(db: Session, group: GroupCreate, username: str) -> Group:
@@ -77,20 +78,27 @@ def get_group(db: Session, group_id: UUID, user: User) -> GroupView:
         raise HTTPException(status_code=404, detail="Group not found")
 
     owed, owes = 0.0, 0.0
-    expense_participations = db.exec(
-        select(ExpenseParticipant)
+    owed = db.scalar(
+        select(func.coalesce(func.sum(ExpenseParticipant.amount), 0))
+        .join(Expense)
+        .filter(
+            ExpenseParticipant.expense_id.in_(
+                select(ExpenseParticipant.expense_id)
+                .join(Expense)
+                .filter(ExpenseParticipant.user_id == user.id, Expense.group_id == group_id)
+            ),
+            ExpenseParticipant.user_id != user.id,
+            ExpenseParticipant.amount > 0,
+        )
+    )
+    owes = db.scalar(
+        select(func.coalesce(func.sum(ExpenseParticipant.amount).label("total"), 0))
         .join(Expense)
         .where(Expense.group_id == group_id)
         .where(ExpenseParticipant.user_id == user.id)
+        .where(ExpenseParticipant.amount > 0)
     )
-
-    for participation in expense_participations:
-        if participation.amount < 0:
-            owed += participation.amount
-        else:
-            owes += participation.amount
-
-    balance = owes + owed
+    balance = owed - owes
 
     group = GroupView(
         id=group.id,

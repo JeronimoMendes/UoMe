@@ -124,7 +124,7 @@ export default function GroupPage({ params }: { params: { id: string } }) {
                             </CardHeader>
                             <CardContent>
                                 {
-                                    group?.balance > 0 ? (
+                                    group?.balance <= 0 ? (
                                         <div className="text-2xl font-bold text-destructive">{formatCurrency(-group?.balance)}</div>
                                     ) : (
                                         <div className="text-2xl font-bold text-primary">{formatCurrency(group?.balance)}</div>
