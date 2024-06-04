@@ -45,12 +45,12 @@ def test_get_group(db, joedoe):
     )
     create_expense(db, expense, joedoe)
     group = get_group(db, group_id="c018fc08-0873-4355-bc95-40a07f146cf7", user=joedoe)
-    assert group.balance == -50
-    assert group.owed == -50
+    assert group.balance == 50
+    assert group.owed == 50
     assert group.owes == 0
 
     group = get_group(db, group_id="c018fc08-0873-4355-bc95-40a07f146cf7", user=cristiano)
-    assert group.balance == 50
+    assert group.balance == -50
     assert group.owed == 0
     assert group.owes == 50
 
@@ -68,13 +68,13 @@ def test_get_group(db, joedoe):
     create_expense(db, expense, joedoe)
 
     group = get_group(db, group_id="c018fc08-0873-4355-bc95-40a07f146cf7", user=joedoe)
-    assert group.balance == 50
-    assert group.owed == -50
+    assert group.balance == -50
+    assert group.owed == 50
     assert group.owes == 100
 
     group = get_group(db, group_id="c018fc08-0873-4355-bc95-40a07f146cf7", user=cristiano)
-    assert group.balance == -50
-    assert group.owed == -100
+    assert group.balance == 50
+    assert group.owed == 100
     assert group.owes == 50
 
     with pytest.raises(HTTPException):
