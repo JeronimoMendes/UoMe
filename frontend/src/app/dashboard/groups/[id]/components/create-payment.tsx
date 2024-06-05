@@ -15,13 +15,14 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const formSchema = z.object({
     amount: z.coerce.number().positive(),
     date: z.date().min(new Date("1900-01-01")),
     paidBy: z.string().min(1),
-    paidTo: z.string().min(1),
+    paidTo: z.string().min(1).refine((value) => value !== formSchema.shape.paidBy, { message: "Paid by and paid to cannot be the same user" })
 });
 
 interface InviteUserFormProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -46,7 +47,13 @@ function CreatePaymentForm({ className, group, user, onSubmit, ...props }: Invit
     });
 
     function handleSubmit(data: z.infer<typeof formSchema>) {
-        onSubmit(data);
+        const userID = group.members.filter((member) => member.email === user.email)[0].id;
+        if (data.paidBy !== userID && data.paidTo !== userID) {
+            toast.error("You must be either the payer or the payee");
+            return;
+        } else {
+         onSubmit(data);
+        }
     }
 
     return (

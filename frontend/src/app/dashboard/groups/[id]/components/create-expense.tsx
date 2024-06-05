@@ -71,6 +71,7 @@ const typeOptions = [
     { label: "Payment", value: "Payment" },
     { label: "Savings", value: "Savings" },
     { label: "Technology", value: "Technology" },
+    { label: "Sports", value: "Sports" },
     { label: "Other", value: "Other" },
 ]
 

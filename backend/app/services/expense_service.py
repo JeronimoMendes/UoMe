@@ -1,9 +1,10 @@
 from uuid import UUID, uuid4
 
+from fastapi import HTTPException
 from sqlmodel import delete, select
 
 from app.core.db import Session
-from app.models import Expense, ExpenseParticipant, Group, User, Payment
+from app.models import Expense, ExpenseParticipant, Group, Payment, User
 from app.schemas.expenses_schema import ExpenseCreate, PaymentCreate
 
 
@@ -35,6 +36,13 @@ def create_expense(db: Session, expense: ExpenseCreate, user: User) -> Expense:
 
 
 def create_payment(db: Session, payment: PaymentCreate, user: User | None) -> Payment:
+    payment.user_payer_id = payment.user_payer_id or user.id
+    if payment.user_payer_id == payment.user_payee_id:
+        raise HTTPException(status_code=400, detail="User payer and user payee cannot be the same")
+
+    if payment.user_payee_id != user.id and payment.user_payer_id != user.id:
+        raise HTTPException(status_code=403, detail="User creating payment must be either payer or payee")
+
     new_payment = Payment(
         id=uuid4(),
         amount=payment.amount,
@@ -42,7 +50,7 @@ def create_payment(db: Session, payment: PaymentCreate, user: User | None) -> Pa
         created_by=user.id,
         group_id=payment.group_id,
         user_payee_id=payment.user_payee_id,
-        user_payer_id=payment.user_payer_id or user.id,
+        user_payer_id=payment.user_payer_id,
     )
     db.add(new_payment)
     return new_payment
