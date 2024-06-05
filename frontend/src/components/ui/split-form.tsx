@@ -19,12 +19,12 @@ interface Split {
 
 function PercentageInput(value: number, amount: number, user: string, onValueChange: (value: string, user: string) => void) {
     function handleValueChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const newAmount = parseFloat(event.target.value) * 0.01 * amount;
-        onValueChange(newAmount.toFixed(2), user);
+        // const newAmount = parseFloat(event.target.value) * 0.01 * amount;
+        onValueChange(event.target.value, user);
     }
     return (
         <div className="flex items-center">
-            <Input onChange={(event) => handleValueChange(event)} type="number" value={amount > 0 ? (value / amount * 100).toFixed(2) : "0"} max="100" min="0" step="0.01" className="w-min text-right"/>
+            <Input onChange={(event) => handleValueChange(event)} type="number" value={value.toString() || "0"} min="0"/>
             <span className="select-unit pl-2">%</span>
         </div>
     )
@@ -48,7 +48,7 @@ export default function SplitForm({
     amount,
     onValueChange
 } : SplitFormProps) {
-    const [splitType, setSplitType] = useState<string>("percentage")
+    const [splitType, setSplitType] = useState<string>("amount")
     const splitsRef = useRef<Split[]>(users.map(user => ({
         user: user.value,
         amount: amount / users.length
@@ -65,9 +65,26 @@ export default function SplitForm({
             }
         })
         setSplits(Array.from(splitsRef.current));
-        console.log("inside handleValueChange", splitsRef.current)
         onValueChange(Array.from(splitsRef.current));
     }, [amount, users])
+
+    useEffect(() => {
+        if (splitType === "percentage") {
+            const intSplits = splitsRef.current.map((split) => {
+                const percentValue = (split.amount / amount * 100).toFixed(2);
+
+                return {
+                    user: split.user,
+                    amount: parseFloat(percentValue)
+                }
+            });
+            setSplits(intSplits);
+            onValueChange(intSplits);
+        } else {
+            setSplits(splitsRef.current);
+            onValueChange(splitsRef.current);
+        }
+    }, [splitType])
 
     const handleValueChange = (value: string, user: string) => {
         splitsRef.current = splitsRef.current.map((split) => {
@@ -78,16 +95,27 @@ export default function SplitForm({
                 }
             }
             return split;
-        })
+        });
+        const intSplits = splitsRef.current.map((split) => {
+            let intValue = split.amount.toFixed(2);
+            if (splitType === "percentage") {
+                intValue = (parseFloat(intValue) * 0.01 * amount).toFixed(2);
+            }
+
+            return {
+                user: split.user,
+                amount: parseFloat(intValue)
+            }
+        });
+
         setSplits(Array.from(splitsRef.current));
-        console.log("inside handleValueChange", splitsRef.current)
-        onValueChange(Array.from(splitsRef.current));
+        onValueChange(intSplits);
     }
 
     return (
         <div className="max-w-sm">
             <div className="flex items-center py-1 justify-between w-min">
-                <Select defaultValue="percentage" onValueChange={setSplitType}>
+                <Select defaultValue="amount" onValueChange={setSplitType}>
                     <SelectTrigger>
                         <SelectValue placeholder="%"/>
                     </SelectTrigger>

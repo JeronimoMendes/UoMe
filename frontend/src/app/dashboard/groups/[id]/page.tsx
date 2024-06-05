@@ -39,7 +39,6 @@ export default function GroupPage({ params }: { params: { id: string } }) {
     })}
 
     const handleRemoveUser = async (email: string) => {
-        console.log('removing user', email)
         removeUserFromGroup(params.id, email).then(async () => {
             const new_group = await getGroup(params.id);
             setGroup(new_group);

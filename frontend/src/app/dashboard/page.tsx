@@ -30,7 +30,6 @@ export default function Dashboard() {
     redirect('/login');
   }
 
-  console.log(session)
 
   return (
     <ScrollArea className="h-full">

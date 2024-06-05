@@ -23,7 +23,6 @@ async function refreshAccessToken(token) {
         grant_type: "refresh_token",
         refresh_token: token.refreshToken,
       })
-
     const response = await fetch(url, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -99,7 +98,8 @@ const authConfig: NextAuthOptions = {
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      authorization: { params: { access_type: "offline", prompt: "consent" } },
     })
   ],
   pages: {
@@ -131,6 +131,7 @@ const authConfig: NextAuthOptions = {
         session.user.email = token.email;
         // encode token
         session.user.token = token.token || token.access_token;
+        session.user.refreshToken = token.refreshToken;
       }
       return session;
     }
