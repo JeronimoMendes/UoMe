@@ -13,12 +13,45 @@ interface IJwtPayload extends JwtPayload {
   }
 }
 
-console.log(process.env.GOOGLE_CLIENT_ID);
+async function refreshAccessToken(token) {
+  try {
+    const url =
+      "https://oauth2.googleapis.com/token?" +
+      new URLSearchParams({
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        grant_type: "refresh_token",
+        refresh_token: token.refreshToken,
+      })
 
-console.log(process.env.GOOGLE_CLIENT_SECRET);
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      method: "POST",
+    })
 
-console.log(process.env.JWT_SECRET);
+    const refreshedTokens = await response.json()
 
+    if (!response.ok) {
+      throw refreshedTokens
+    }
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+    }
+  } catch (error) {
+    console.log(error)
+
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    }
+  }
+}
 
 const authConfig: NextAuthOptions = {
   providers: [
@@ -74,13 +107,22 @@ const authConfig: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account  }: { token: any, user: any, account: any}) {
-      if (user) {
+      if (user && account) {
         token.id = user.id;
         token.username = user.username;
         token.email = user.email;
-        token.token = user.token || account?.id_token
+        token.token = user.token || account?.id_token;
+        token.accessTokenExpires = Date.now() + account.expires_in * 1000;
+        token.refreshToken = account.refresh_token;
+
+        return token;
       }
-      return token;
+
+      if (Date.now() < token.accessTokenExpires) {
+        return token
+      }
+
+      return refreshAccessToken(token);
     },
     async session({ session, token, user }) {
       if (session.user) {
