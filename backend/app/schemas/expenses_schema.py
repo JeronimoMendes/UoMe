@@ -19,6 +19,7 @@ class PaymentCreate(SQLModel):
     date: datetime
     group_id: UUID | None
     user_payee_id: UUID
+    user_payer_id: UUID | None
 
 
 class ExpenseParticipantResponse(SQLModel):

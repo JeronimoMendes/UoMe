@@ -7,6 +7,7 @@ export interface User {
     id: string;
     username: string;
     email: string;
+    image: string | null;
 }
 
 export interface TokenResponse {
@@ -33,6 +34,12 @@ export interface GroupView extends Group {
     balance: number;
     owed: number;
     owes: number;
+    debts: Debt[];
+}
+
+export interface Debt extends Group {
+    amount: number;
+    user: User
 }
 
 export interface CreateGroupRequest {

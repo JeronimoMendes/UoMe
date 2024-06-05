@@ -85,7 +85,9 @@ def get_group(db: Session, group_id: UUID, user: User) -> GroupView:
             ExpenseParticipant.expense_id.in_(
                 select(ExpenseParticipant.expense_id)
                 .join(Expense)
-                .filter(ExpenseParticipant.user_id == user.id, Expense.group_id == group_id)
+                .filter(
+                    ExpenseParticipant.user_id == user.id, Expense.group_id == group_id, ExpenseParticipant.amount < 0
+                )
             ),
             ExpenseParticipant.user_id != user.id,
             ExpenseParticipant.amount > 0,
@@ -128,7 +130,11 @@ def get_group(db: Session, group_id: UUID, user: User) -> GroupView:
                 ExpenseParticipant.expense_id.in_(
                     select(ExpenseParticipant.expense_id)
                     .join(Expense)
-                    .filter(ExpenseParticipant.user_id == user.id, Expense.group_id == group_id)
+                    .filter(
+                        ExpenseParticipant.user_id == user.id,
+                        Expense.group_id == group_id,
+                        ExpenseParticipant.amount < 0,
+                    )
                 ),
                 ExpenseParticipant.user_id == member.id,
                 ExpenseParticipant.amount > 0,
@@ -142,7 +148,11 @@ def get_group(db: Session, group_id: UUID, user: User) -> GroupView:
                 ExpenseParticipant.expense_id.in_(
                     select(ExpenseParticipant.expense_id)
                     .join(Expense)
-                    .filter(ExpenseParticipant.user_id == member.id, Expense.group_id == group_id)
+                    .filter(
+                        ExpenseParticipant.user_id == member.id,
+                        Expense.group_id == group_id,
+                        ExpenseParticipant.amount < 0,
+                    )
                 ),
                 ExpenseParticipant.user_id == user.id,
                 ExpenseParticipant.amount > 0,

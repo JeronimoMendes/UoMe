@@ -1,5 +1,5 @@
 'use client';
-import { addExpense, getGroup, inviteUserToGroup, removeUserFromGroup } from '@/api/group-service';
+import { addExpense, addPayment, getGroup, inviteUserToGroup, removeUserFromGroup } from '@/api/group-service';
 import { GroupView } from '@/api/types';
 import { DataTable } from '@/components/expenses/expenses-table';
 import { columns as expenseTableCols } from '@/components/expenses/expenses-table/columns';
@@ -7,7 +7,7 @@ import { Icons } from '@/components/icons';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { UserAvatar } from '@/components/ui/avatar';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,12 +18,14 @@ import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { CreateExpenseForm } from './components/create-expense';
+import { CreatePaymentForm } from './components/create-payment';
 import { InviteUserForm } from './components/invite-user';
 
 export default function GroupPage({ params }: { params: { id: string } }) {
     const { data: session, status } = useSession();
     const [group, setGroup] = useState<GroupView>();
     const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
+    const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
 
     useEffect(() => {
         getGroup(params.id).then(setGroup);
@@ -63,6 +65,21 @@ export default function GroupPage({ params }: { params: { id: string } }) {
                 expenses: [newExpense, ...group.expenses]
             }))
             toast.success('Expense added successfully', { duration: 5000 });
+        })
+    }
+
+    const handleAddPayment = async (args) => {
+        addPayment(group?.id, {
+            amount: args.amount,
+            date: args.date,
+            group_id: group?.id,
+            user_payee_id: args.paidTo,
+            user_payer_id: args.paidBy
+        }).then(async (newExpense) => {
+            toast.success('Payment added successfully', { duration: 5000 });
+            const updatedGroup = await getGroup(params.id);
+            setGroup(updatedGroup);
+            setPaymentDialogOpen(false);
         })
     }
 
@@ -185,14 +202,52 @@ export default function GroupPage({ params }: { params: { id: string } }) {
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-col">
-                                    <p>
-                                        <span className='font-medium'>John Doe</span> pays you <span className='font-medium'>30 €</span>
-                                    </p>
-                                    <p>
-                                        <span className='font-medium'>You</span> pay Ronaldo <span className='font-medium'>30 €</span>
-                                    </p>
+                                    {group?.debts.map((debt) => (
+                                        debt.amount > 0 ? (
+                                            <div key={debt.user.email} className="flex items-center my-2">
+                                                <UserAvatar user={debt.user} className="h-9 w-9" />
+                                                <div className="ml-4 space-y-1 flex-grow">
+                                                    <p className="text-sm font-medium leading-none text-left">{debt.user.username}</p>
+                                                    <p className="text-sm text-muted-foreground text-left">
+                                                        Needs to pay you {formatCurrency(debt.amount)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div key={debt.user.email} className="flex items-center my-2">
+                                                <UserAvatar user={debt.user} className="h-9 w-9" />
+                                                <div className="ml-4 space-y-1 flex-grow">
+                                                    <p className="text-sm font-medium leading-none text-left">{debt.user.username}</p>
+                                                    <p className="text-sm text-muted-foreground text-left">
+                                                        You need to pay {formatCurrency(-debt.amount)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )
+                                    ))}
                                 </div>
                             </CardContent>
+                            <CardFooter>
+                                <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button className='!text-sm'>
+                                            <Icons.add />
+                                            <span className='hidden sm:block'>&nbsp; Register payment</span>
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>Register payment</DialogTitle>
+                                            <DialogDescription>
+                                                Create new payment to clear debt
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <ScrollArea className='h-96'>
+                                            <CreatePaymentForm group={group} user={session.user} onSubmit={handleAddPayment} className="p-4" />
+                                        </ScrollArea>
+                                    </DialogContent>
+                                </Dialog>
+                            </CardFooter>
                         </Card>
                     </div>
                 </TabsContent>

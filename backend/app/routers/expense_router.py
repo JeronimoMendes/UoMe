@@ -2,13 +2,13 @@ from uuid import UUID
 
 from fastapi import Depends, HTTPException
 from fastapi.routing import APIRouter
+from sqlmodel import select
 
 import app.services.expense_service as expense_service
 from app.core.db import Session, get_db
-from app.models import User, Group
+from app.models import Group, Payment, User
 from app.schemas.expenses_schema import ExpenseCreate, ExpenseResponse, PaymentCreate
 from app.services.auth_service import get_current_user
-from sqlmodel import select
 
 expense_router = APIRouter()
 
@@ -21,7 +21,7 @@ async def create_expense(expense: ExpenseCreate, user: User = Depends(get_curren
     return expense
 
 
-@expense_router.post("/expenses/payment", response_model=ExpenseResponse)
+@expense_router.post("/expenses/payment", response_model=Payment)
 async def create_payment(payment: PaymentCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     user_payee = db.exec(select(User).where(User.id == payment.user_payee_id)).first()
     if not user_payee:

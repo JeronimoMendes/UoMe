@@ -22,6 +22,8 @@ RUN npm install -D @swc/cli @swc/core
 
 COPY . .
 
-RUN npm run build
-
 CMD [ "npm", "start" ]
+
+FROM base AS build
+
+RUN npm run build

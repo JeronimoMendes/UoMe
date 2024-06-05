@@ -34,7 +34,7 @@ def create_expense(db: Session, expense: ExpenseCreate, user: User) -> Expense:
     return new_expense
 
 
-def create_payment(db: Session, payment: PaymentCreate, user: User) -> Payment:
+def create_payment(db: Session, payment: PaymentCreate, user: User | None) -> Payment:
     new_payment = Payment(
         id=uuid4(),
         amount=payment.amount,
@@ -42,7 +42,7 @@ def create_payment(db: Session, payment: PaymentCreate, user: User) -> Payment:
         created_by=user.id,
         group_id=payment.group_id,
         user_payee_id=payment.user_payee_id,
-        user_payer_id=user.id,
+        user_payer_id=payment.user_payer_id or user.id,
     )
     db.add(new_payment)
     return new_payment

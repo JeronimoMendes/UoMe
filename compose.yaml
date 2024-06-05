@@ -29,10 +29,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: base
     container_name: uome-frontend
     image: uome-frontend
-    # env_file:
-    #   - frontend/.env
     ports:
       - 3000:3000
     volumes:
