@@ -35,7 +35,6 @@ async def create_payment(payment: PaymentCreate, user: User = Depends(get_curren
         raise HTTPException(status_code=403, detail="User does not belong to group")
 
     payment = expense_service.create_payment(db, payment, user)
-    db.commit()
     return payment
 
 
