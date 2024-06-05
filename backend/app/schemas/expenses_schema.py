@@ -1,8 +1,9 @@
 from datetime import datetime
 from uuid import UUID
-from app.schemas.auth_schema import UserResponse
 
 from sqlmodel import SQLModel
+
+from app.schemas.auth_schema import UserResponse
 
 
 class ExpenseCreate(SQLModel):
@@ -17,9 +18,9 @@ class ExpenseCreate(SQLModel):
 class PaymentCreate(SQLModel):
     amount: float
     date: datetime
-    group_id: UUID | None
+    group_id: UUID | None = None
     user_payee_id: UUID
-    user_payer_id: UUID | None
+    user_payer_id: UUID | None = None
 
 
 class ExpenseParticipantResponse(SQLModel):
