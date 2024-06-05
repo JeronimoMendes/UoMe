@@ -108,6 +108,8 @@ function CreateExpenseForm({ className, group, user, onSubmit, ...props }: Invit
                 form.setValue("splitParts", splitParts);
                 return;
             }
+            // remove timezone from date
+            data.date = format(data.date, "yyyy-MM-dd");
             onSubmit({ ...data, splitParts });
         });
     }
