@@ -75,3 +75,8 @@ def get_user_expenses(db: Session, user_id: UUID) -> list[Expense]:
 def get_group_expenses(db: Session, group_id: UUID) -> list[Expense]:
     group = db.exec(select(Group).where(Group.id == group_id)).first()
     return group.expenses
+
+
+def get_group_payments(db: Session, group_id: UUID) -> list[Payment]:
+    payments = db.exec(select(Payment).where(Payment.group_id == group_id)).all()
+    return payments

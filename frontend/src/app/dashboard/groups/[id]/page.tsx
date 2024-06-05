@@ -2,7 +2,7 @@
 import { addExpense, addPayment, getGroup, inviteUserToGroup, removeUserFromGroup } from '@/api/group-service';
 import { GroupView } from '@/api/types';
 import { DataTable } from '@/components/expenses/expenses-table';
-import { columns as expenseTableCols } from '@/components/expenses/expenses-table/columns';
+import { expenseTableCols, paymentTableCols } from '@/components/expenses/expenses-table/columns';
 import { Icons } from '@/components/icons';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { UserAvatar } from '@/components/ui/avatar';
@@ -278,6 +278,10 @@ export default function GroupPage({ params }: { params: { id: string } }) {
                     </div>
                     <div>
                         <DataTable columns={expenseTableCols} data={group?.expenses}/>
+                    </div>
+                    <h2 className="text-2xl font-bold tracking-tight">Payments</h2>
+                    <div>
+                        <DataTable columns={paymentTableCols} data={group?.payments}/>
                     </div>
                 </TabsContent>
 

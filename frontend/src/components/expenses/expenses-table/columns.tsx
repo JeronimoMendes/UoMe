@@ -10,7 +10,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
 
 
-export const columns: ColumnDef<Expense>[] = [
+export const expenseTableCols: ColumnDef<Expense>[] = [
   {
     accessorKey: "description",
     header: "Description",
@@ -103,4 +103,92 @@ export const columns: ColumnDef<Expense>[] = [
       )
     }
   },
+]
+
+export const paymentTableCols: ColumnDef<Expense>[] = [
+  {
+    accessorKey: "amount",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Amount
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("amount"))
+      return <div>{formatCurrency(amount)}</div>
+    }
+  },
+  {
+    accessorKey: "date",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const stringDate: string = row.getValue("date")
+      const date = new Date(stringDate)
+      return <div>{date.toLocaleDateString()}</div>
+    }
+  },
+  {
+    accessorKey: "user_payer",
+    header: "Payer",
+    cell: ({ row }) => {
+      const payer = row.getValue("user_payer")
+      return (
+        <div className="flex items-center -space-x-4">
+            <HoverCard key={payer.id}>
+              <HoverCardTrigger asChild>
+                <UserAvatar user={payer} className="h-8 w-8" />
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <div className="flex items-center space-x-2">
+                  <UserAvatar user={payer} className="h-8 w-8" />
+                  <div>
+                    <div>{payer.username}</div>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+        </div>
+      )
+    }
+  },
+  {
+    accessorKey: "user_payee",
+    header: "Payee",
+    cell: ({ row }) => {
+      const payee = row.getValue("user_payee")
+      return (
+        <div className="flex items-center -space-x-4">
+            <HoverCard key={payee.id}>
+              <HoverCardTrigger asChild>
+                <UserAvatar user={payee} className="h-8 w-8" />
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <div className="flex items-center space-x-2">
+                  <UserAvatar user={payee} className="h-8 w-8" />
+                  <div>
+                    <div>{payee.username}</div>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+        </div>
+      )
+    }
+  },,
 ]

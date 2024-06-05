@@ -77,3 +77,15 @@ async def get_group_expenses(group_id: UUID, user: User = Depends(get_current_us
         raise HTTPException(status_code=403, detail="User does not belong to the group")
 
     return expense_service.get_group_expenses(db, group_id)
+
+
+@expense_router.get("/groups/{group_id}/payments", response_model=list[Payment])
+async def get_group_payments(group_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    group = db.exec(select(Group).where(Group.id == group_id)).first()
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    if group_id not in [group.id for group in user.groups]:
+        raise HTTPException(status_code=403, detail="User does not belong to the group")
+
+    return expense_service.get_group_payments(db, group_id)

@@ -41,3 +41,11 @@ class ExpenseResponse(SQLModel):
 class ExpenseParticipantCreate(SQLModel):
     user_id: UUID
     amount: float
+
+
+class PaymentResponse(SQLModel):
+    amount: float
+    date: datetime
+    group_id: UUID | None = None
+    user_payee: UserResponse
+    user_payer: UserResponse

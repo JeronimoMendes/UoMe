@@ -1,12 +1,12 @@
 from uuid import UUID
 
 from fastapi.exceptions import HTTPException
+from sqlalchemy import func
 from sqlmodel import select
 
 from app.core.db import Session
-from app.models import Group, User, UserGroup, ExpenseParticipant, Expense, Payment
-from app.schemas.group_schemas import GroupCreate, GroupView, Debt
-from sqlalchemy import func
+from app.models import Expense, ExpenseParticipant, Group, Payment, User, UserGroup
+from app.schemas.group_schemas import Debt, GroupCreate, GroupView
 
 
 def create_group(db: Session, group: GroupCreate, username: str) -> Group:
@@ -191,6 +191,7 @@ def get_group(db: Session, group_id: UUID, user: User) -> GroupView:
         owes=owes,
         balance=balance,
         debts=debts,
+        payments=group.payments,
     )
 
     return group

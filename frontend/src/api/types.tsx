@@ -37,6 +37,14 @@ export interface GroupView extends Group {
     debts: Debt[];
 }
 
+export interface Payment {
+    amount: number;
+    date: string;
+    group_id: string;
+    user_payee: User;
+    user_payer: User;
+}
+
 export interface Debt extends Group {
     amount: number;
     user: User

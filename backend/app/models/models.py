@@ -21,6 +21,13 @@ class User(SQLModel, table=True):
     groups: list["Group"] = Relationship(back_populates="users", link_model=UserGroup)
     expenses: list["ExpenseParticipant"] = Relationship(back_populates="user")
 
+    payments_from: list["Payment"] = Relationship(
+        sa_relationship_kwargs={"foreign_keys": "Payment.user_payer_id"}, back_populates="user_payer"
+    )
+    payments_received: list["Payment"] = Relationship(
+        sa_relationship_kwargs={"foreign_keys": "Payment.user_payee_id"}, back_populates="user_payee"
+    )
+
 
 class Group(SQLModel, table=True):
     id: uuid.UUID = Field(primary_key=True)
@@ -30,6 +37,7 @@ class Group(SQLModel, table=True):
 
     users: list[User] = Relationship(back_populates="groups", link_model=UserGroup)
     expenses: list["Expense"] = Relationship(back_populates="group")
+    payments: list["Payment"] = Relationship(back_populates="group")
 
     # if id is not provided, generate a new uuid
     def __init__(self, **data):
@@ -61,6 +69,14 @@ class Payment(SQLModel, table=True):
     group_id: uuid.UUID = Field(foreign_key="group.id", nullable=True)
     user_payee_id: uuid.UUID = Field(foreign_key="user.id")
     user_payer_id: uuid.UUID = Field(foreign_key="user.id")
+
+    user_payer: User = Relationship(
+        sa_relationship_kwargs={"foreign_keys": "Payment.user_payer_id"}, back_populates="payments_from"
+    )
+    user_payee: User = Relationship(
+        sa_relationship_kwargs={"foreign_keys": "Payment.user_payee_id"}, back_populates="payments_received"
+    )
+    group: Group = Relationship(back_populates="payments")
 
 
 class ExpenseParticipant(SQLModel, table=True):

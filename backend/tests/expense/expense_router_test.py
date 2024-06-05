@@ -46,6 +46,12 @@ def test_expense_create(authenticated_client: TestClient):
     assert response_json["user_payer_id"] == "398a95d6-f521-4572-b65c-e8b024f04030"
     assert response_json["user_payee_id"] == "d1a0fdd8-db0a-4368-bb5a-b01bdeed6563"
 
+    # test group payments list
+    response = authenticated_client.get("/groups/c018fc08-0873-4355-bc95-40a07f146cf7/payments")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+    assert response.json()[0]["id"] == response_json["id"]
+
 
 def test_expense_get(authenticated_client: TestClient):
     create_expense_schema = ExpenseCreate(

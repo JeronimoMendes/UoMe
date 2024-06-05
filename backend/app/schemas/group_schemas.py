@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlmodel import SQLModel
 
 from app.schemas.auth_schema import UserResponse
-from app.schemas.expenses_schema import ExpenseResponse
+from app.schemas.expenses_schema import ExpenseResponse, PaymentResponse
 
 
 class GroupCreate(SQLModel):
@@ -26,3 +26,4 @@ class GroupView(SQLModel):
     owed: float = 0.0
     owes: float = 0.0
     debts: list[Debt] = []
+    payments: list[PaymentResponse] = []

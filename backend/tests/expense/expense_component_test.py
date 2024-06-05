@@ -2,12 +2,14 @@ from sqlmodel import select
 
 from app.core.db import Session
 from app.models import User
-from app.schemas.expenses_schema import ExpenseCreate, ExpenseParticipantCreate
+from app.schemas.expenses_schema import ExpenseCreate, ExpenseParticipantCreate, PaymentCreate
 from app.services.expense_service import (
     create_expense,
+    create_payment,
     delete_expense,
     get_expense,
     get_group_expenses,
+    get_group_payments,
     get_user_expenses,
 )
 
@@ -118,3 +120,27 @@ def test_get_group_expenses(db: Session):
     for expense in expenses:
         assert expense.created_by == user.id
         assert expense.group_id == user.groups[0].id
+
+
+def test_get_group_payments(db: Session):
+    cristiano = db.exec(select(User).where(User.username == "cristianoronaldo")).first()
+    joedoe = db.exec(select(User).where(User.username == "joedoe")).first()
+
+    payment = PaymentCreate(
+        amount=100.0,
+        date="2024-05-12T22:40:00.992740",
+        group_id=cristiano.groups[0].id,
+        user_payee_id=joedoe.id,
+        user_payer_id=cristiano.id,
+    )
+
+    payment = create_payment(db, payment, cristiano)
+    payments = get_group_payments(db, cristiano.groups[0].id)
+
+    assert len(payments) == 1
+    assert payments[0].amount == payment.amount
+    assert payments[0].date == payment.date
+    assert payments[0].created_by == cristiano.id
+    assert payments[0].group_id == payment.group_id
+    assert payments[0].user_payee_id == payment.user_payee_id
+    assert payments[0].user_payer_id == payment.user_payer_id
