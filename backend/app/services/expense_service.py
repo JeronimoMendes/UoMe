@@ -3,8 +3,8 @@ from uuid import UUID, uuid4
 from sqlmodel import delete, select
 
 from app.core.db import Session
-from app.models import Expense, ExpenseParticipant, Group, User
-from app.schemas.expenses_schema import ExpenseCreate
+from app.models import Expense, ExpenseParticipant, Group, User, Payment
+from app.schemas.expenses_schema import ExpenseCreate, PaymentCreate
 
 
 def create_expense(db: Session, expense: ExpenseCreate, user: User) -> Expense:
@@ -32,6 +32,20 @@ def create_expense(db: Session, expense: ExpenseCreate, user: User) -> Expense:
         db.add(participant)
 
     return new_expense
+
+
+def create_payment(db: Session, payment: PaymentCreate, user: User) -> Payment:
+    new_payment = Payment(
+        id=uuid4(),
+        amount=payment.amount,
+        date=payment.date,
+        created_by=user.id,
+        group_id=payment.group_id,
+        user_payee_id=payment.user_payee_id,
+        user_payer_id=user.id,
+    )
+    db.add(new_payment)
+    return new_payment
 
 
 def delete_expense(db: Session, expense_id: UUID):

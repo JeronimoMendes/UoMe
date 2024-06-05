@@ -12,8 +12,8 @@ from app.services.group_service import (
     get_user_groups,
     remove_user_from_group,
 )
-from app.services.expense_service import create_expense
-from app.schemas.expenses_schema import ExpenseCreate, ExpenseParticipantCreate
+from app.services.expense_service import create_expense, create_payment
+from app.schemas.expenses_schema import ExpenseCreate, ExpenseParticipantCreate, PaymentCreate
 
 
 def test_get_group(db, joedoe):
@@ -48,11 +48,17 @@ def test_get_group(db, joedoe):
     assert group.balance == 50
     assert group.owed == 50
     assert group.owes == 0
+    assert len(group.debts) == 1
+    assert group.debts[0].user.username == "cristianoronaldo"
+    assert group.debts[0].amount == 50
 
     group = get_group(db, group_id="c018fc08-0873-4355-bc95-40a07f146cf7", user=cristiano)
     assert group.balance == -50
     assert group.owed == 0
     assert group.owes == 50
+    assert len(group.debts) == 1
+    assert group.debts[0].user.username == "joedoe"
+    assert group.debts[0].amount == -50
 
     expense = ExpenseCreate(
         amount=200,
@@ -71,11 +77,34 @@ def test_get_group(db, joedoe):
     assert group.balance == -50
     assert group.owed == 50
     assert group.owes == 100
+    assert len(group.debts) == 1
+    assert group.debts[0].user.username == "cristianoronaldo"
+    assert group.debts[0].amount == -50
 
     group = get_group(db, group_id="c018fc08-0873-4355-bc95-40a07f146cf7", user=cristiano)
     assert group.balance == 50
     assert group.owed == 100
     assert group.owes == 50
+    assert len(group.debts) == 1
+    assert group.debts[0].user.username == "joedoe"
+    assert group.debts[0].amount == 50
+
+    payment = PaymentCreate(
+        amount=50, date="2021-10-10", group_id="c018fc08-0873-4355-bc95-40a07f146cf7", user_payee_id=cristiano.id
+    )
+    create_payment(db, payment, joedoe)
+
+    group = get_group(db, group_id="c018fc08-0873-4355-bc95-40a07f146cf7", user=joedoe)
+    assert group.balance == 0
+    assert group.owed == 50
+    assert group.owes == 50
+    assert len(group.debts) == 0
+
+    group = get_group(db, group_id="c018fc08-0873-4355-bc95-40a07f146cf7", user=cristiano)
+    assert group.balance == 0
+    assert group.owed == 50
+    assert group.owes == 50
+    assert len(group.debts) == 0
 
     with pytest.raises(HTTPException):
         group = get_group(db, group_id="c018fc08-0873-4355-bc95-40a07f146cf8", user=joedoe)

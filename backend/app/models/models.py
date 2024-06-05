@@ -52,6 +52,17 @@ class Expense(SQLModel, table=True):
     participants: list["ExpenseParticipant"] = Relationship(back_populates="expense")
 
 
+class Payment(SQLModel, table=True):
+    id: uuid.UUID = Field(primary_key=True)
+    amount: float = Field(nullable=False, gt=0.0)
+    date: datetime = Field(default=datetime.now(UTC))
+    created_at: datetime = Field(default=datetime.now(UTC))
+    created_by: uuid.UUID = Field(foreign_key="user.id")
+    group_id: uuid.UUID = Field(foreign_key="group.id", nullable=True)
+    user_payee_id: uuid.UUID = Field(foreign_key="user.id")
+    user_payer_id: uuid.UUID = Field(foreign_key="user.id")
+
+
 class ExpenseParticipant(SQLModel, table=True):
     expense_id: uuid.UUID = Field(foreign_key="expense.id", primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", primary_key=True)

@@ -14,6 +14,13 @@ class ExpenseCreate(SQLModel):
     participants: list["ExpenseParticipantCreate"]
 
 
+class PaymentCreate(SQLModel):
+    amount: float
+    date: datetime
+    group_id: UUID | None
+    user_payee_id: UUID
+
+
 class ExpenseParticipantResponse(SQLModel):
     user: UserResponse
     amount: float
