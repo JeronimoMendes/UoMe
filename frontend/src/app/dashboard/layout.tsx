@@ -1,13 +1,14 @@
-import type { Metadata } from 'next';
+'use client'
+// import type { Metadata } from 'next';
 import Header from './components/layout/header';
 import Sidebar from './components/layout/sidebar';
 
-export const metadata: Metadata = {
-  title: 'UoMe',
-  description: 'Expense tracking app'
-};
+// export const metadata: Metadata = {
+//   title: 'UoMe',
+//   description: 'Expense tracking app'
+// };
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children
 }: {
   children: React.ReactNode;
