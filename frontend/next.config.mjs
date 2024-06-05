@@ -7,3 +7,5 @@ const nextConfig = {
     transpileOnly: true,
   },
 };
+
+export default nextConfig;
