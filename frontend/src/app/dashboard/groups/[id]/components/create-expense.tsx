@@ -97,7 +97,6 @@ function CreateExpenseForm({ className, group, user, onSubmit, ...props }: Invit
     });
 
     function handleSubmit(data: z.infer<typeof formSchema>) {
-        console.log("inside handlesbimitqwtw", data)
         const splitParts = splitsRef.current.map((split) => {
             return {
                 user: split.user,
@@ -105,7 +104,6 @@ function CreateExpenseForm({ className, group, user, onSubmit, ...props }: Invit
             }
         });
         form.trigger().then((isValid) => {
-            console.log("after trigger", isValid)
             if (!isValid) {
                 form.setValue("splitParts", splitParts);
                 return;
