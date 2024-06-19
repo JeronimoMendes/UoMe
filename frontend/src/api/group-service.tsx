@@ -37,6 +37,11 @@ export async function addExpense(expense: Expense): Promise<Expense> {
     return response.data
 }
 
+export async function deleteExpense(expenseId: string): Promise<void> {
+    const client = await getApiClient('client');
+    await client.delete(`/expenses/${expenseId}`);
+}
+
 export async function addPayment(groupId: string, payment: { amount: number, date: string, group_id: string, user_payee_id: string, user_payer_id: string }): Promise<Expense> {
     const client = await getApiClient('client');
     const response = await client.post(`/expenses/payment`, payment);

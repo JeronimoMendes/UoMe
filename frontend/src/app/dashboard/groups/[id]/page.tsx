@@ -1,5 +1,5 @@
 'use client';
-import { addExpense, addPayment, getGroup, inviteUserToGroup, removeUserFromGroup } from '@/api/group-service';
+import { addExpense, addPayment, deleteExpense, getGroup, inviteUserToGroup, removeUserFromGroup } from '@/api/group-service';
 import { GroupView } from '@/api/types';
 import { DataTable } from '@/components/expenses/expenses-table';
 import { expenseTableCols, paymentTableCols } from '@/components/expenses/expenses-table/columns';
@@ -79,6 +79,14 @@ export default function GroupPage({ params }: { params: { id: string } }) {
             const updatedGroup = await getGroup(params.id);
             setGroup(updatedGroup);
             setPaymentDialogOpen(false);
+        })
+    }
+
+    const handleDeleteExpense = async (id: string) => {
+        deleteExpense(id).then(async () => {
+            const new_group = await getGroup(params.id);
+            setGroup(new_group);
+            toast.success('Expense deleted successfully', { duration: 5000 });
         })
     }
 
@@ -276,7 +284,7 @@ export default function GroupPage({ params }: { params: { id: string } }) {
                         </Dialog>
                     </div>
                     <div>
-                        <DataTable columns={expenseTableCols} data={group?.expenses}/>
+                        <DataTable columns={expenseTableCols} data={group?.expenses.map((expense: Expense) => {return {...expense, delete: () => handleDeleteExpense(expense.id)}})}/>
                     </div>
                     <h2 className="text-2xl font-bold tracking-tight">Payments</h2>
                     <div>

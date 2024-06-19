@@ -1,8 +1,10 @@
 "use client"
 
 import { Expense, Participant } from "@/api/types"
+import { Icons } from "@/components/icons"
 import { UserAvatar } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { formatCurrency } from "@/lib/utils"
 import { HoverCard } from "@radix-ui/react-hover-card"
@@ -103,6 +105,32 @@ export const expenseTableCols: ColumnDef<Expense>[] = [
       )
     }
   },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <Icons.horizontalDots className="h-4 w-4" />
+              </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => row.original.delete()}
+              >
+                Delete
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem disabled>Edit</DropdownMenuItem>
+              <DropdownMenuItem disabled>View details</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    },
+  }
 ]
 
 export const paymentTableCols: ColumnDef<Expense>[] = [
@@ -190,5 +218,5 @@ export const paymentTableCols: ColumnDef<Expense>[] = [
         </div>
       )
     }
-  },,
+  },
 ]
