@@ -21,6 +21,7 @@ import {
   LucideIcon,
   LucideProps,
   Moon,
+  MoreHorizontal,
   MoreVertical,
   Pizza,
   Settings,
@@ -64,6 +65,7 @@ export const Icons = {
   moon: Moon,
   laptop: Laptop,
   calendar: Calendar,
+  horizontalDots: MoreHorizontal,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
