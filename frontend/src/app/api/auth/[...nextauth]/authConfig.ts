@@ -38,13 +38,11 @@ async function refreshAccessToken(token) {
 
     return {
       ...token,
-      accessToken: refreshedTokens.access_token,
+      accessToken: refreshedTokens.id_token,
       accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
     }
   } catch (error) {
-    console.log(error)
-
     return {
       ...token,
       error: "RefreshAccessTokenError",
