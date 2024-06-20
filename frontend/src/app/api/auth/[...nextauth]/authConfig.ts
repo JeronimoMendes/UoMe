@@ -38,13 +38,11 @@ async function refreshAccessToken(token) {
 
     return {
       ...token,
-      accessToken: refreshedTokens.access_token,
+      accessToken: refreshedTokens.id_token,
       accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
     }
   } catch (error) {
-    console.log(error)
-
     return {
       ...token,
       error: "RefreshAccessTokenError",
@@ -107,20 +105,20 @@ const authConfig: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account  }: { token: any, user: any, account: any}) {
-      if (user && account) {
-        token.id = user.id;
-        token.username = user.username;
-        token.email = user.email;
-        token.token = user.token || account?.id_token;
-        token.accessTokenExpires = Date.now() + account.expires_in * 1000;
-        token.refreshToken = account.refresh_token;
+      // if (user && account) {
+      //   token.id = user.id;
+      //   token.username = user.username;
+      //   token.email = user.email;
+      //   token.token = user.token || account?.id_token;
+      //   token.accessTokenExpires = Date.now() + account.expires_in * 1000;
+      //   token.refreshToken = account.refresh_token;
 
-        return token;
-      }
+      //   return token;
+      // }
 
-      if (Date.now() < token.accessTokenExpires) {
-        return token
-      }
+      // if (Date.now() < token.accessTokenExpires) {
+      //   return token
+      // }
 
       return refreshAccessToken(token);
     },
