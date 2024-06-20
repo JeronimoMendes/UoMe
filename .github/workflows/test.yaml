@@ -1,5 +1,12 @@
 name: pytest
-on: [push, pull_request]
+on:
+  push:
+    path:
+      - 'backend/**'
+  pull_request:
+    path:
+      - 'backend/**'
+
 jobs:
   test:
     runs-on: ubuntu-latest
