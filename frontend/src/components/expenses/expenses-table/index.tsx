@@ -2,13 +2,16 @@
 import {
     ColumnDef,
     ColumnFiltersState,
+    FilterFn,
+    SortingFn,
     SortingState,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    useReactTable,
+    sortingFns,
+    useReactTable
 } from "@tanstack/react-table"
 import * as React from "react"
 
@@ -24,9 +27,56 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
+// A TanStack fork of Kent C. Dodds' match-sorter library that provides ranking information
+import {
+    RankingInfo,
+    compareItems,
+    rankItem,
+} from '@tanstack/match-sorter-utils'
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+}
+
+declare module '@tanstack/react-table' {
+  //add fuzzy filter to the filterFns
+  interface FilterFns {
+    fuzzy: FilterFn<unknown>
+  }
+  interface FilterMeta {
+    itemRank: RankingInfo
+  }
+}
+
+// Define a custom fuzzy filter function that will apply ranking info to rows (using match-sorter utils)
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  // Rank the item
+  const itemRank = rankItem(row.getValue(columnId), value)
+
+  // Store the itemRank info
+  addMeta({
+    itemRank,
+  })
+
+  // Return if the item should be filtered in/out
+  return itemRank.passed
+}
+
+// Define a custom fuzzy sort function that will sort by rank if the row has ranking information
+const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
+  let dir = 0
+
+  // Only sort by rank if the column has ranking information
+  if (rowA.columnFiltersMeta[columnId]) {
+    dir = compareItems(
+      rowA.columnFiltersMeta[columnId]?.itemRank!,
+      rowB.columnFiltersMeta[columnId]?.itemRank!
+    )
+  }
+
+  // Provide an alphanumeric fallback for when the item ranks are equal
+  return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir
 }
 
 export function DataTable<TData, TValue>({
@@ -34,19 +84,26 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([{ id: "date", desc: true }])
+    const [globalFilter, setGlobalFilter] = React.useState('')
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const table = useReactTable({
         data,
         columns,
+        filterFns: {
+            fuzzy: fuzzyFilter, //define as a filter function that can be used in column definitions
+        },
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: 'fuzzy',
         state: {
             sorting,
-            columnFilters
+            columnFilters,
+            globalFilter,
         },
     })
 
@@ -55,10 +112,8 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center py-4 max-w-fit">
                 <Input
                 placeholder="Filter..."
-                value={(table.getColumn("description")?.getFilterValue() as string) ?? ""}
-                onChange={(event) =>
-                    table.getColumn("description")?.setFilterValue(event.target.value)
-                }
+                onChange={event => setGlobalFilter(event.target.value)}
+                value={globalFilter ?? ""}
                 className="max-w-sm"
                 />
             </div>
