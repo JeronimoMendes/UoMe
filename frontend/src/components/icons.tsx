@@ -8,7 +8,6 @@ import {
   ChevronsUpDown,
   CirclePlus,
   CircuitBoardIcon,
-  Command,
   CreditCard,
   File,
   FileText,
@@ -31,6 +30,7 @@ import {
   User,
   User2Icon,
   UserX2Icon,
+  WalletCards,
   X
 } from 'lucide-react';
 
@@ -38,7 +38,7 @@ export type Icon = LucideIcon;
 
 export const Icons = {
   dashboard: LayoutDashboardIcon,
-  logo: Command,
+  logo: WalletCards,
   login: LogIn,
   close: X,
   profile: User2Icon,
