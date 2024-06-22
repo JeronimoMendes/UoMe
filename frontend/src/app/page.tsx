@@ -11,6 +11,7 @@
  * @see https://v0.dev/t/Gub3RYWv1Yr
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
+import { Icons } from "@/components/icons";
 import { FadeText } from "@/components/magicui/fade-text";
 import Marquee from "@/components/magicui/marquee";
 import { cn } from "@/lib/utils";
@@ -100,22 +101,22 @@ export default function Landing() {
   return (
     <div className="flex flex-col min-h-[100dvh]">
       <title>UoMe</title>
-      <header className="bg-background px-4 lg:px-6 h-14 flex items-center justify-between">
-        <Link href="#" className="flex items-center" prefetch={false}>
-          <MountainIcon className="h-6 w-6" />
-          <span className="sr-only">UoMe</span>
+      <header className="bg-background lg:px-6 h-14 flex items-center justify-between mr-2 lg:mr-6">
+        <Link href="#" className="flex items-center px-4 text-lg font-medium" prefetch={false}>
+          <Icons.logo className="h-6 w-6 mr-2" />
+          UoMe
         </Link>
-        <nav className="flex items-center gap-6">
-          <Link href="/dashboard" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+        <nav className="flex items-center gap-6 text-base">
+          <Link href="/dashboard" className="font-medium hover:underline underline-offset-4" prefetch={false}>
             Home
           </Link>
-          <Link href="#about" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+          <Link href="#about" className="font-medium hover:underline underline-offset-4" prefetch={false}>
             About
           </Link>
-          <Link href="#pricing" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+          <Link href="#pricing" className="font-medium hover:underline underline-offset-4" prefetch={false}>
             Pricing
           </Link>
-          <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+          <Link href="/login" className="font-medium hover:underline underline-offset-4" prefetch={false}>
             Login
           </Link>
         </nav>
@@ -316,24 +317,5 @@ export default function Landing() {
         </nav>
       </footer>
     </div>
-  )
-}
-
-function MountainIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-    </svg>
   )
 }
