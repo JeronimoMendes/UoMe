@@ -99,6 +99,7 @@ const ReviewCard = ({
 export default function Landing() {
   return (
     <div className="flex flex-col min-h-[100dvh]">
+      <title>UoMe</title>
       <header className="bg-background px-4 lg:px-6 h-14 flex items-center justify-between">
         <Link href="#" className="flex items-center" prefetch={false}>
           <MountainIcon className="h-6 w-6" />
@@ -156,7 +157,7 @@ export default function Landing() {
                     className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
-                    Get started, it's free!
+                    Get started, it&apos;s free!
                   </Link>
                 </div>
               </div>
@@ -260,7 +261,7 @@ export default function Landing() {
                           show: { transition: { delay: 0.8 } },
                         }}
                       >
-                        Setup budgets and see how much you're spending on what. Get insights on your spending habits. <span className="font-bold">No more guesswork.</span>
+                        Setup budgets and see how much you&apos;re spending on what. Get insights on your spending habits. <span className="font-bold">No more guesswork.</span>
                       </FadeText>
                     </div>
                   </li>
