@@ -177,7 +177,7 @@ function CreateExpenseForm({ className, group, user, onSubmit, ...props }: Invit
                                         <PopoverContent className="w-[200px] p-0">
                                         <Command>
                                             <CommandInput placeholder="Search type..." />
-                                            <CommandEmpty>No language found.</CommandEmpty>
+                                            <CommandEmpty>No types found.</CommandEmpty>
                                             <CommandList>
                                                 <CommandGroup>
                                                 {typeOptions.map((type) => (
