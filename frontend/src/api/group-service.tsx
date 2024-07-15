@@ -47,3 +47,9 @@ export async function addPayment(groupId: string, payment: { amount: number, dat
     const response = await client.post(`/expenses/payment`, payment);
     return response.data
 }
+
+export async function getPersonalExpenses(): Promise<Expense[]> {
+    const client = await getApiClient('client');
+    const response = await client.get('/users/me/expenses');
+    return response.data;
+}
