@@ -108,8 +108,9 @@ export function DataTable<TData, TValue>({
     })
 
     return (
+      <>
         <div className="overflow-x-auto max-w-xs sm:max-w-full">
-            <div className="flex items-center py-4 max-w-fit">
+            <div className="flex items-center justify-between	 py-4 ">
                 <Input
                 placeholder="Filter..."
                 onChange={event => setGlobalFilter(event.target.value)}
@@ -180,5 +181,6 @@ export function DataTable<TData, TValue>({
                 </Button>
             </div>
         </div>
+      </>
     )
 }

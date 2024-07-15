@@ -66,7 +66,7 @@ export const expenseTableCols: ColumnDef<Expense>[] = [
       const stringDate: string = row.getValue("date")
       const date = new Date(stringDate)
       return <div>{date.toLocaleDateString()}</div>
-    }
+    },
   },
   {
     accessorKey: "participants",
@@ -133,6 +133,48 @@ export const expenseTableCols: ColumnDef<Expense>[] = [
   }
 ]
 
+export const personalExpensesCols: ColumnDef<Expense>[] = [
+  expenseTableCols[0],
+  {
+    accessorKey: "amount",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Amount
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const user = row.original.user
+      const participation = row.getValue("participants").filter((p: Participant) => p.user.email === user.email)[0]
+      let amount = parseFloat(participation.amount)
+      if (amount < 0) {
+        amount = -amount
+        row.getValue("participants").forEach((p: Participant) => {
+          if (p.user.email !== user.email)
+            amount -= parseFloat(p.amount)
+        })
+      }
+      return <div>{formatCurrency(amount)}</div>
+    }
+  },
+  expenseTableCols[1],
+  expenseTableCols[4],
+  {
+    accessorKey: "group",
+    header: "Group",
+    cell: ({ row }) => {
+      const group = row.getValue("group")
+      return <div><a href={`/dashboard/groups/${group?.id}`}>{group?.name}</a></div>
+    }
+  },
+  expenseTableCols[3]
+]
+
 export const paymentTableCols: ColumnDef<Expense>[] = [
   {
     accessorKey: "amount",
@@ -177,21 +219,23 @@ export const paymentTableCols: ColumnDef<Expense>[] = [
     cell: ({ row }) => {
       const payer = row.getValue("user_payer")
       return (
-        <div className="flex items-center -space-x-4">
-            <HoverCard key={payer.id}>
-              <HoverCardTrigger asChild>
-                <UserAvatar user={payer} className="h-8 w-8" />
-              </HoverCardTrigger>
-              <HoverCardContent>
-                <div className="flex items-center space-x-2">
+        <>
+          <div className="flex items-center -space-x-4">
+              <HoverCard key={payer.id}>
+                <HoverCardTrigger asChild>
                   <UserAvatar user={payer} className="h-8 w-8" />
-                  <div>
-                    <div>{payer.username}</div>
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  <div className="flex items-center space-x-2">
+                    <UserAvatar user={payer} className="h-8 w-8" />
+                    <div>
+                      <div>{payer.username}</div>
+                    </div>
                   </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-        </div>
+                </HoverCardContent>
+              </HoverCard>
+          </div>
+        </>
       )
     }
   },

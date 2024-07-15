@@ -29,6 +29,7 @@ async function refreshAccessToken(token) {
       },
       method: "POST",
     })
+    console.log("refreshing token")
 
     const refreshedTokens = await response.json()
 
@@ -106,20 +107,23 @@ const authConfig: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, account  }: { token: any, user: any, account: any}) {
       if (user && account) {
+        console.log("jwt user and account")
         token.id = user.id;
         token.username = user.username;
         token.email = user.email;
         token.token = user.token || account?.id_token;
-        token.accessTokenExpires = Date.now() + account.expires_in * 1000;
+        token.accessTokenExpires = account.expires_in;
         token.refreshToken = account.refresh_token;
 
         return token;
       }
 
       if (Date.now() < token.accessTokenExpires) {
+        console.log("jwt token not expired: ", token.accessTokenExpires, " > ", Date.now())
         return token
       }
 
+      console.log("jwt token expired: ", token.accessTokenExpires, " < ", Date.now())
       return refreshAccessToken(token);
     },
     async session({ session, token, user }) {
@@ -128,7 +132,7 @@ const authConfig: NextAuthOptions = {
         session.user.username = token.username || token.name;
         session.user.email = token.email;
         // encode token
-        session.user.token = token.token || token.access_token;
+        session.user.token = token.access_token || token.token;
         session.user.refreshToken = token.refreshToken;
       }
       return session;
