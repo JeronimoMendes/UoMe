@@ -28,12 +28,18 @@ class ExpenseParticipantResponse(SQLModel):
     amount: float
 
 
+class GroupExpenseView(SQLModel):
+    id: UUID
+    name: str
+
+
 class ExpenseResponse(SQLModel):
     id: UUID
     amount: float
     description: str
     date: datetime
     group_id: UUID
+    group: GroupExpenseView
     type: str
     participants: list[ExpenseParticipantResponse]
 
@@ -49,3 +55,9 @@ class PaymentResponse(SQLModel):
     group_id: UUID | None = None
     user_payee: UserResponse
     user_payer: UserResponse
+
+
+class ExpenseQuery(SQLModel):
+    start_date: datetime | None = None
+    end_date: datetime | None = None
+    type: str | None = None
