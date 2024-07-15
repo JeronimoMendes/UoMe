@@ -5,7 +5,7 @@ from sqlmodel import delete, select
 
 from app.core.db import Session
 from app.models import Expense, ExpenseParticipant, Group, Payment, User
-from app.schemas.expenses_schema import ExpenseCreate, PaymentCreate
+from app.schemas.expenses_schema import ExpenseCreate, ExpenseQuery, PaymentCreate
 
 
 def create_expense(db: Session, expense: ExpenseCreate, user: User) -> Expense:
@@ -66,9 +66,18 @@ def get_expense(db: Session, expense_id: UUID) -> Expense:
     return expense
 
 
-def get_user_expenses(db: Session, user_id: UUID) -> list[Expense]:
+def get_user_expenses(db: Session, user_id: UUID, query: ExpenseQuery) -> list[Expense]:
     user = db.exec(select(User).where(User.id == user_id)).first()
-    expenses = [participation.expense for participation in user.expenses]
+    expenses_ids = [participation.expense_id for participation in user.expenses]
+    expense_query = select(Expense).where(Expense.id.in_(expenses_ids))
+    if query.start_date:
+        expense_query = expense_query.where(Expense.date >= query.start_date)
+    if query.end_date:
+        expense_query = expense_query.where(Expense.date <= query.end_date)
+    if query.type:
+        expense_query = expense_query.where(Expense.type == query.type)
+
+    expenses = db.exec(expense_query).all()
     return expenses
 
 
