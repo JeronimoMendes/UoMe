@@ -14,6 +14,7 @@ import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { toast } from 'sonner';
+import { CreateExpenseForm } from './components/create-expense';
 
 
 export default function PersonalExpensesPage({ params }: { params: { id: string } }) {
@@ -121,7 +122,7 @@ export default function PersonalExpensesPage({ params }: { params: { id: string 
                                     </DialogDescription>
                                 </DialogHeader>
                                 <ScrollArea className='h-96'>
-                                    {/* <CreateExpenseForm group={group} user={session.user} onSubmit={handleAddExpense} className="p-4" /> */}
+                                    <CreateExpenseForm user={session.user} onSubmit={handleAddExpense} className="p-4" />
                                 </ScrollArea>
                             </DialogContent>
                         </Dialog>
