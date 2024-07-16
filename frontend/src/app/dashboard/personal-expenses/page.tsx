@@ -1,5 +1,5 @@
 'use client';
-import { addPersonalExpense, getPersonalExpenses } from '@/api/group-service';
+import { addPersonalExpense, deleteExpense, getPersonalExpenses } from '@/api/group-service';
 import { Expense } from '@/api/types';
 import { DataTable } from '@/components/expenses/expenses-table';
 import { personalExpensesCols } from '@/components/expenses/expenses-table/columns';
@@ -58,13 +58,12 @@ export default function PersonalExpensesPage({ params }: { params: { id: string 
         })
     }
 
-    // const handleDeleteExpense = async (id: string) => {
-    //     deleteExpense(id).then(async () => {
-    //         const new_group = await getGroup(params.id);
-    //         setGroup(new_group);
-    //         toast.success('Expense deleted successfully', { duration: 5000 });
-    //     })
-    // }
+    const handleDeleteExpense = async (id: string) => {
+        deleteExpense(id).then(async () => {
+            setExpenses(expenses.filter((expense) => expense.id !== id));
+            toast.success('Expense deleted successfully', { duration: 5000 });
+        })
+    }
 
     if (status === 'loading') {
         // TODO: eventually fix hydration issue on LoadingSkeleton and uncomment

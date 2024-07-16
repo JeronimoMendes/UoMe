@@ -172,7 +172,8 @@ export const personalExpensesCols: ColumnDef<Expense>[] = [
       return <div><a href={`/dashboard/groups/${group?.id}`}>{group?.name}</a></div>
     }
   },
-  expenseTableCols[3]
+  expenseTableCols[3],
+  expenseTableCols[5]
 ]
 
 export const paymentTableCols: ColumnDef<Expense>[] = [
