@@ -1,10 +1,12 @@
 import datetime
-import sentry_sdk
 import os
 import uuid
 
+import sentry_sdk
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from google.auth.transport import requests
+from google.oauth2 import id_token
 from jose import jwt
 from jose.exceptions import JWTError
 from passlib.context import CryptContext
@@ -13,9 +15,6 @@ from sqlmodel import Session, select
 from app.core.db import get_db
 from app.models import User
 from app.schemas.auth_schema import CreateUser, UserResponse
-from google.oauth2 import id_token
-from google.auth.transport import requests
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecret")

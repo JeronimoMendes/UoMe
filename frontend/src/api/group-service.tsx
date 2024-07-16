@@ -1,6 +1,6 @@
 
 import { getApiClient } from "./client";
-import { CreateGroupRequest, Expense, Group, GroupView } from "./types";
+import { CreateGroupRequest, Expense, Group, GroupView, PersonalExpense } from "./types";
 
 export async function getMyGroups(): Promise<Group[]> {
     const client = await getApiClient('client');
@@ -46,4 +46,16 @@ export async function addPayment(groupId: string, payment: { amount: number, dat
     const client = await getApiClient('client');
     const response = await client.post(`/expenses/payment`, payment);
     return response.data
+}
+
+export async function getPersonalExpenses(): Promise<Expense[]> {
+    const client = await getApiClient('client');
+    const response = await client.get('/users/me/expenses');
+    return response.data;
+}
+
+export async function addPersonalExpense(expense: PersonalExpense): Promise<Expense> {
+    const client = await getApiClient('client');
+    const response = await client.post('/users/me/expense', expense);
+    return response.data;
 }

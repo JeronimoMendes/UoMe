@@ -7,7 +7,13 @@ from sqlmodel import select
 import app.services.expense_service as expense_service
 from app.core.db import Session, get_db
 from app.models import Group, Payment, User
-from app.schemas.expenses_schema import ExpenseCreate, ExpenseResponse, PaymentCreate
+from app.schemas.expenses_schema import (
+    ExpenseCreate,
+    ExpenseQuery,
+    ExpenseResponse,
+    PaymentCreate,
+    PersonalExpenseCreate,
+)
 from app.services.auth_service import get_current_user
 
 expense_router = APIRouter()
@@ -63,8 +69,21 @@ async def get_expense(expense_id: UUID, user: User = Depends(get_current_user), 
 
 
 @expense_router.get("/users/me/expenses", response_model=list[ExpenseResponse])
-async def get_user_expenses(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    return expense_service.get_user_expenses(db, user.id)
+async def get_user_expenses(
+    user: User = Depends(get_current_user), db: Session = Depends(get_db), query: ExpenseQuery = Depends()
+):
+    return expense_service.get_user_expenses(db, user.id, query)
+
+
+@expense_router.post("/users/me/expense", response_model=ExpenseResponse)
+async def create_user_expense(
+    expense: PersonalExpenseCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    participants = [{"user_id": user.id, "amount": -expense.amount}]
+    expense = ExpenseCreate(**expense.model_dump(), participants=participants)
+    expense = expense_service.create_expense(db, expense, user)
+    db.commit()
+    return expense
 
 
 @expense_router.get("/groups/{group_id}/expenses", response_model=list[ExpenseResponse])

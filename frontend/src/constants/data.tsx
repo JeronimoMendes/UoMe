@@ -18,10 +18,9 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Personal Expenses',
-    href: '/dashboard/personal',
+    href: '/dashboard/personal-expenses',
     icon: 'billing',
     label: 'Personal Expenses',
-    disabled: true
   },
   {
     title: 'Groups',
@@ -30,6 +29,30 @@ export const navItems: NavItem[] = [
     label: 'Groups'
   }
 ];
+
+export const ExpenseTypes = [
+    { label: "Food", value: "Food" },
+    { label: "Rent", value: "Rent" },
+    { label: "Water", value: "Water" },
+    { label: "Electricity", value: "Electricity" },
+    { label: "Internet", value: "Internet" },
+    { label: "Laundry", value: "Laundry" },
+    { label: "Groceries", value: "Groceries" },
+    { label: "Transport", value: "Transport" },
+    { label: "Health", value: "Health" },
+    { label: "Household", value: "Household"},
+    { label: "Pets", value: "Pets" },
+    { label: "Clothing", value: "Clothing" },
+    { label: "Gifts", value: "Gifts" },
+    { label: "Education", value: "Education" },
+    { label: "Entertainment", value: "Entertainment" },
+    { label: "Loan", value: "Loan" },
+    { label: "Payment", value: "Payment" },
+    { label: "Savings", value: "Savings" },
+    { label: "Technology", value: "Technology" },
+    { label: "Sports", value: "Sports" },
+    { label: "Other", value: "Other" },
+]
 
 export const groups: Group[] = [
   {

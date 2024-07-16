@@ -1,27 +1,23 @@
 "use client"
-import { GroupView, User } from "@/api/types";
+import { User } from "@/api/types";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import MultiSelectFormField from "@/components/ui/multi-select";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import SplitForm, { Split } from "@/components/ui/split-form";
+import { ExpenseTypes } from "@/constants/data";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { ExpenseTypes } from "@/constants/data";
 const formSchema = z.object({
     description: z.string().min(1),
     amount: z.coerce.number().positive(),
@@ -35,61 +31,30 @@ const formSchema = z.object({
     })).min(1),
 });
 
-interface InviteUserFormProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CreateExpenseFormProps extends React.HTMLAttributes<HTMLDivElement> {
     onSubmit: SubmitHandler<{
         description: string;
         amount: number;
         date: string;
-        paidBy: string;
         type: string;
-        splitBetween: string[];
-        splitParts: {
-            amount: number;
-            user: string;
-        }[];
     }>,
-    group: GroupView,
     user: User,
 }
 
 
-function CreateExpenseForm({ className, group, user, onSubmit, ...props }: InviteUserFormProps) {
-    const defaultSplitBetween = group?.members.map((member) => member.email) ?? [user?.email];
-    const splitsRef = useRef<Split[]>([]);
+function CreateExpenseForm({ className, user, onSubmit, ...props }: CreateExpenseFormProps) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             description: "",
             amount: 0,
             date: new Date(),
-            paidBy: user?.email,
-            splitBetween: defaultSplitBetween,
             type: "",
-            splitParts: [
-                {
-                    user: user?.email,
-                    amount: 0,
-                },
-            ],
         },
     });
 
     function handleSubmit(data: z.infer<typeof formSchema>) {
-        const splitParts = splitsRef.current.map((split) => {
-            return {
-                user: split.user,
-                amount: split.user === data.paidBy ? -data.amount : split.amount,
-            }
-        });
-        form.trigger().then((isValid) => {
-            if (!isValid) {
-                form.setValue("splitParts", splitParts);
-                return;
-            }
-            // remove timezone from date
-            data.date = format(data.date, "yyyy-MM-dd");
-            onSubmit({ ...data, splitParts });
-        });
+        onSubmit(data);
     }
 
     return (
@@ -225,72 +190,9 @@ function CreateExpenseForm({ className, group, user, onSubmit, ...props }: Invit
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="paidBy"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Paid by</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select user"/>
-                                        </SelectTrigger>
-                                    <SelectContent>
-                                        {group.members.map((member) => (
-                                            <SelectItem key={member.id} value={member.email}>
-                                                {member.email === user.email ? "You" : member.username}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="splitBetween"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Split between</FormLabel>
-                                    <FormControl>
-                                        <MultiSelectFormField
-                                            options={group.members.map((member) => {
-                                                return {
-                                                    label: member.email === user.email ? "You" : member.username,
-                                                    value: member.email,
-                                                };
-                                            })}
-                                            defaultValue={field.value}
-                                            onValueChange={field.onChange}
-                                            placeholder="Select users to split between"
-                                            variant="inverted"
-                                        />
-                                    </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                 </form>
-                <FormField
-                    control={form.control}
-                    name="splitParts"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Split parts</FormLabel>
-                            <SplitForm users={form.getValues().splitBetween.map((userEmail) => {
-                                const member = group.members.find((member) => member.email === userEmail);
-                                return {
-                                    value: member?.email,
-                                    label: member?.email === user.email ? "You" : member?.username,
-                                }
-                            })} amount={form.getValues().amount} onValueChange={(newSplits: Split[]) => (splitsRef.current = newSplits)} />
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <Button className='!text-sm w-min' onClick={() => handleSubmit(form.getValues())}>Add</Button>
             </Form>
+            <Button className='!text-sm w-min my-2' onClick={() => handleSubmit(form.getValues())}>Add</Button>
         </div>
     )
 }
