@@ -2,7 +2,7 @@ from sqlmodel import select
 
 from app.core.db import Session
 from app.models import User
-from app.schemas.expenses_schema import ExpenseCreate, ExpenseParticipantCreate, PaymentCreate
+from app.schemas.expenses_schema import ExpenseCreate, ExpenseParticipantCreate, ExpenseQuery, PaymentCreate
 from app.services.expense_service import (
     create_expense,
     create_payment,
@@ -90,7 +90,7 @@ def test_get_user_expenses(db: Session):
     for fake_expense in fake_expenses:
         create_expense(db, fake_expense, user)
 
-    expenses = get_user_expenses(db, user.id)
+    expenses = get_user_expenses(db, user.id, ExpenseQuery())
     assert len(expenses) == 5
     for expense in expenses:
         assert expense.created_by == user.id
