@@ -54,7 +54,7 @@ function CreateExpenseForm({ className, user, onSubmit, ...props }: CreateExpens
     });
 
     function handleSubmit(data: z.infer<typeof formSchema>) {
-        console.log(data)
+        onSubmit(data);
     }
 
     return (

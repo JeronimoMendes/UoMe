@@ -69,3 +69,10 @@ export interface Participant {
     user: User;
     amount: string;
 }
+
+export interface PersonalExpense {
+    amount: number;
+    description: string;
+    date: string;
+    type: string;
+}

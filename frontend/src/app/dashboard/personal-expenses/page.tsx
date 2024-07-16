@@ -1,5 +1,5 @@
 'use client';
-import { addExpense, deleteExpense, getGroup, getPersonalExpenses } from '@/api/group-service';
+import { addPersonalExpense, getPersonalExpenses } from '@/api/group-service';
 import { Expense } from '@/api/types';
 import { DataTable } from '@/components/expenses/expenses-table';
 import { personalExpensesCols } from '@/components/expenses/expenses-table/columns';
@@ -46,33 +46,25 @@ export default function PersonalExpensesPage({ params }: { params: { id: string 
 
     const handleAddExpense = async (args) => {
         const expense = {
-            group_id: params.id,
             amount: args.amount,
             description: args.description,
             date: args.date,
             type: args.type,
-            participants: args.splitParts.map((part) => ({
-                user_id: group?.members.find((member) => member.email === part.user)?.id,
-                amount: part.amount
-            }))
         }
-        addExpense(expense).then(async (newExpense) => {
+        addPersonalExpense(expense).then(async (newExpense) => {
             setExpenseDialogOpen(false);
-            setGroup(group => ({
-                ...group,
-                expenses: [newExpense, ...group.expenses]
-            }))
+            setExpenses([...expenses, newExpense]);
             toast.success('Expense added successfully', { duration: 5000 });
         })
     }
 
-    const handleDeleteExpense = async (id: string) => {
-        deleteExpense(id).then(async () => {
-            const new_group = await getGroup(params.id);
-            setGroup(new_group);
-            toast.success('Expense deleted successfully', { duration: 5000 });
-        })
-    }
+    // const handleDeleteExpense = async (id: string) => {
+    //     deleteExpense(id).then(async () => {
+    //         const new_group = await getGroup(params.id);
+    //         setGroup(new_group);
+    //         toast.success('Expense deleted successfully', { duration: 5000 });
+    //     })
+    // }
 
     if (status === 'loading') {
         // TODO: eventually fix hydration issue on LoadingSkeleton and uncomment
