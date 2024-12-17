@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import UUID
 
 from sqlmodel import SQLModel
+from pydantic import validator
 
 from app.schemas.auth_schema import UserResponse
 
@@ -13,6 +14,13 @@ class ExpenseCreate(SQLModel):
     group_id: UUID | None = None
     type: str
     participants: list["ExpenseParticipantCreate"]
+
+    @validator("participants")
+    def validate_participants(cls, participants):
+        if len(participants) < 2:
+            raise ValueError("Group expense must have at least two participants")
+
+        return participants
 
 
 class PersonalExpenseCreate(SQLModel):
