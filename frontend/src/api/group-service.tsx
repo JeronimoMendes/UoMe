@@ -1,4 +1,3 @@
-
 import { getApiClient } from "./client";
 import { CreateGroupRequest, Expense, Group, GroupView, PersonalExpense } from "./types";
 
@@ -25,10 +24,14 @@ export async function inviteUserToGroup(groupId: string, email: string): Promise
     await client.post(`/groups/${groupId}/users/${email}`);
 }
 
-
 export async function removeUserFromGroup(groupId: string, email: string): Promise<void> {
     const client = await getApiClient('client');
     await client.delete(`/groups/${groupId}/users/${email}`);
+}
+
+export async function deleteGroup(groupId: string): Promise<void> {
+    const client = await getApiClient('client');
+    await client.delete(`/groups/${groupId}`);
 }
 
 export async function addExpense(expense: Expense): Promise<Expense> {
