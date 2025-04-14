@@ -11,7 +11,7 @@ const TermsOfService = () => {
         <h1 className="text-2xl font-bold mb-4">Terms of Service</h1>
         <p className="text-sm text-gray-500 mb-4">Last updated: April 14, 2025</p>
         <p>Welcome to UoMe!</p>
-        <p className="mt-4">By using uome.tech or any part of the UoMe project, you agree to these Terms of Service ("Terms"). Please read them carefully. If you do not agree, do not use our service.</p>
+        <p className="mt-4">By using uome.tech or any part of the UoMe project, you agree to these Terms of Service (&quot;Terms&quot;). Please read them carefully. If you do not agree, do not use our service.</p>
         <ol className="list-decimal ml-6 mt-4 space-y-4">
           <li>
             <strong>What is UoMe?</strong>
@@ -25,7 +25,7 @@ const TermsOfService = () => {
           </li>
           <li>
             <strong>No Guarantees</strong>
-            <p>UoMe is provided "as is" with no warranties.</p>
+            <p>UoMe is provided &quot;as is&quot; with no warranties.</p>
             <p>We do not guarantee the availability, security, or accuracy of the service at all times.</p>
             <p>Your data may be lost or unavailable at any time. Please use it at your own risk.</p>
           </li>
