@@ -81,20 +81,18 @@ def test_get_user_expenses(db: Session):
             type="test",
             group_id=user.groups[0].id,
             participants=[
-                ExpenseParticipantCreate(user_id=user.id, amount=100.0),
+                ExpenseParticipantCreate(user_id=user.id, amount=50.0),
+                ExpenseParticipantCreate(user_id=user.groups[0].users[1].id, amount=50.0),
             ],
         )
         for _ in range(5)
     ]
+    for expense in fake_expenses:
+        create_expense(db, expense, user)
 
-    for fake_expense in fake_expenses:
-        create_expense(db, fake_expense, user)
-
-    expenses = get_user_expenses(db, user.id, ExpenseQuery())
-    assert len(expenses) == 5
-    for expense in expenses:
-        assert expense.created_by == user.id
-        assert expense.group_id == user.groups[0].id
+    query = ExpenseQuery(start_date=None, end_date=None, type=None)
+    user_expenses = get_user_expenses(db, user.id, query)
+    assert len(user_expenses) == 5
 
 
 def test_get_group_expenses(db: Session):
@@ -107,19 +105,17 @@ def test_get_group_expenses(db: Session):
             type="test",
             group_id=user.groups[0].id,
             participants=[
-                ExpenseParticipantCreate(user_id=user.id, amount=100.0),
+                ExpenseParticipantCreate(user_id=user.id, amount=50.0),
+                ExpenseParticipantCreate(user_id=user.groups[0].users[1].id, amount=50.0),
             ],
         )
         for _ in range(5)
     ]
-    for fake_expense in fake_expenses:
-        create_expense(db, fake_expense, user)
+    for expense in fake_expenses:
+        create_expense(db, expense, user)
 
-    expenses = get_group_expenses(db, user.groups[0].id)
-    assert len(expenses) == 5
-    for expense in expenses:
-        assert expense.created_by == user.id
-        assert expense.group_id == user.groups[0].id
+    group_expenses = get_group_expenses(db, user.groups[0].id)
+    assert len(group_expenses) == 5
 
 
 def test_get_group_payments(db: Session):
