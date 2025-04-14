@@ -4,6 +4,7 @@ import { SessionProvider } from 'next-auth/react';
 import { Inter } from 'next/font/google';
 import ThemeProvider from './dashboard/components/layout/ThemeToggle/theme-provider';
 import './globals.css';
+import CookieConsentBanner from "../components/CookieConsentBanner";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
             <SessionProvider>
               {children}
               <Toaster richColors/>
+              <CookieConsentBanner />
             </SessionProvider>
           </ThemeProvider>
       </body>
