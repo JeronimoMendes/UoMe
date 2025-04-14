@@ -1,11 +1,3 @@
-
-// export default function Home() {
-//   return (
-//     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-//       <title>UoMe</title>
-//     </main>
-//   );
-// }
 /**
  * v0 by Vercel.
  * @see https://v0.dev/t/Gub3RYWv1Yr
@@ -16,6 +8,8 @@ import { FadeText } from "@/components/magicui/fade-text";
 import Marquee from "@/components/magicui/marquee";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Navbar from '@/components/Navbar';
+
 
 // this are funny reviews on how people owe money to friends.
 const reviews = [
@@ -101,26 +95,7 @@ export default function Landing() {
   return (
     <div className="flex flex-col min-h-[100dvh]">
       <title>UoMe</title>
-      <header className="bg-background lg:px-6 h-14 flex items-center justify-between mr-2 lg:mr-6">
-        <Link href="#" className="flex items-center px-4 text-lg font-medium" prefetch={false}>
-          <Icons.logo className="h-6 w-6 mr-2" />
-          UoMe
-        </Link>
-        <nav className="flex items-center gap-6 text-base">
-          <Link href="/dashboard" className="font-medium hover:underline underline-offset-4" prefetch={false}>
-            Home
-          </Link>
-          <Link href="#about" className="font-medium hover:underline underline-offset-4" prefetch={false}>
-            About
-          </Link>
-          <Link href="#pricing" className="font-medium hover:underline underline-offset-4" prefetch={false}>
-            Pricing
-          </Link>
-          <Link href="/login" className="font-medium hover:underline underline-offset-4" prefetch={false}>
-            Login
-          </Link>
-        </nav>
-      </header>
+      <Navbar />
       <main className="flex-1">
         <section id="home" className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
