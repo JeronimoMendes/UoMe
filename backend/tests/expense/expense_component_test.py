@@ -90,6 +90,7 @@ def test_get_user_expenses(db: Session):
     for expense in fake_expenses:
         create_expense(db, expense, user)
 
+
     query = ExpenseQuery(start_date=None, end_date=None, type=None)
     user_expenses = get_user_expenses(db, user.id, query)
     assert len(user_expenses) == 5

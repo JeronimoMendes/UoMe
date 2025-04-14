@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Navbar from '@/components/Navbar';
 
+
 // this are funny reviews on how people owe money to friends.
 const reviews = [
   {
